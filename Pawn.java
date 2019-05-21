@@ -8,17 +8,9 @@
  *
  * @author glabka
  */
-public class Pawn extends Piece{
-    
-    private final Color color;
-    
-    public Pawn(Color color){
-        this.color = color;
-    }
+public class Pawn extends Piece {
 
-    @Override
-    public Color getColor() {
-        return color;
+    public Pawn(Color color) {
+        super(color);
     }
-    
 }

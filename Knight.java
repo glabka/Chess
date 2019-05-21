@@ -10,14 +10,7 @@
  */
 public class Knight extends Piece{
     
-    private final Color color;
-    
-    public Knight(Color color){
-        this.color = color;
-    }
-
-    @Override
-    public Color getColor() {
-        return color;
+    public Knight(Color color) {
+        super(color);
     }
 }

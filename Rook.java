@@ -10,14 +10,7 @@
  */
 public class Rook extends Piece{
     
-    private final Color color;
-    
-    public Rook(Color color){
-        this.color = color;
-    }
-
-    @Override
-    public Color getColor() {
-        return color;
+       public Rook(Color color) {
+        super(color);
     }
 }

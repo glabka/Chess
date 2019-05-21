@@ -143,9 +143,9 @@ public class Rules {
         
         // upward diagonal
         if(horLeft < horRight){
-            
+            //TODO
         } else { // downward diagonal
-            
+            //TODO
         }
     }
 

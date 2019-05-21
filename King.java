@@ -8,17 +8,9 @@
  *
  * @author glabka
  */
-public class King extends Piece{
-    
-    private final Color color;
-    
-    public King(Color color){
-        this.color = color;
-    }
+public class King extends Piece {
 
-    @Override
-    public Color getColor() {
-        return color;
+    public King(Color color) {
+        super(color);
     }
-    
 }

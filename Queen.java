@@ -10,14 +10,7 @@
  */
 public class Queen extends Piece{
     
-    private final Color color;
-    
-    public Queen(Color color){
-        this.color = color;
-    }
-
-    @Override
-    public Color getColor() {
-        return color;
+    public Queen(Color color) {
+        super(color);
     }
 }

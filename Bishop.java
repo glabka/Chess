@@ -10,14 +10,7 @@
  */
 public class Bishop extends Piece{
     
-    private final Color color;
-    
-    public Bishop(Color color){
-        this.color = color;
-    }
-
-    @Override
-    public Color getColor() {
-        return color;
+    public Bishop(Color color) {
+        super(color);
     }
 }

@@ -9,7 +9,15 @@
  * @author glabka
  */
 public abstract class Piece {
-    
-    public abstract Color getColor();
-    
+
+    private final Color color;
+
+    public Piece(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor(){
+        return color;
+    }
+
 }
