@@ -146,37 +146,41 @@ public class Board {
         
     }
     
-    public PieceEnum getPieceType(int ver, int hor){
-        if(!isIndexOnBoard(ver)){
-            throw new IllegalArgumentException("position ver = " + ver + " is out of bounds.");
-        } else if(!isIndexOnBoard(hor)){
-            throw new IllegalArgumentException("position hor = " + hor + " is out of bounds.");
-        }
-        
-        if(board[ver][hor] == null){
-            return null;
-        } else if(board[ver][hor] instanceof King){
-            return PieceEnum.KING;
-        } else if(board[ver][hor] instanceof Queen){
-            return PieceEnum.QUEEN;
-        } else if(board[ver][hor] instanceof Bishop){
-            return PieceEnum.BISHOP;
-        } else if(board[ver][hor] instanceof Knight){
-            return PieceEnum.KNIGHT;
-        } else if(board[ver][hor] instanceof Rook){
-            return PieceEnum.ROOK;
-        } else { // Pawn
-            return PieceEnum.PAWN;
-        }
+    public Piece getPiece(int ver, int hor){
+        return board[ver][hor];
     }
     
-    public Color getPieceColor(int ver, int hor){
-        if(board[ver][hor] == null){
-            return null;
-        } else{
-            return board[ver][hor].getColor();
-        }
-    }
+//    public PieceEnum getPieceType(int ver, int hor){
+//        if(!isIndexOnBoard(ver)){
+//            throw new IllegalArgumentException("position ver = " + ver + " is out of bounds.");
+//        } else if(!isIndexOnBoard(hor)){
+//            throw new IllegalArgumentException("position hor = " + hor + " is out of bounds.");
+//        }
+//        
+//        if(board[ver][hor] == null){
+//            return null;
+//        } else if(board[ver][hor] instanceof King){
+//            return PieceEnum.KING;
+//        } else if(board[ver][hor] instanceof Queen){
+//            return PieceEnum.QUEEN;
+//        } else if(board[ver][hor] instanceof Bishop){
+//            return PieceEnum.BISHOP;
+//        } else if(board[ver][hor] instanceof Knight){
+//            return PieceEnum.KNIGHT;
+//        } else if(board[ver][hor] instanceof Rook){
+//            return PieceEnum.ROOK;
+//        } else { // Pawn
+//            return PieceEnum.PAWN;
+//        }
+//    }
+//    
+//    public Color getPieceColor(int ver, int hor){
+//        if(board[ver][hor] == null){
+//            return null;
+//        } else{
+//            return board[ver][hor].getColor();
+//        }
+//    }
     
     public static boolean isIndexOnBoard(int index){
         if(index >= 0 || index < 8){

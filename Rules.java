@@ -24,34 +24,31 @@ public class Rules {
 //        if()
 //    }
     public static boolean isMoveLegal(Player p, Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
-        // Both PieceEnum and Color can be null if there's no piece on the location
-        PieceEnum movingPieceType = b.getPieceType(verFrom, horFrom);
-        Color movingPieceColor = b.getPieceColor(verFrom, horFrom);
+        // Piece can be null if there's no piece on the location
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
+        Piece standingPiece = b.getPiece(verTo, horTo);
 
-        PieceEnum standingPieceType = b.getPieceType(verTo, horTo);
-        Color standingPieceColor = b.getPieceColor(verTo, horTo);
-
-        if (movingPieceType == null) {
+        if (movingPiece == null) {
             return false;
         }
 
-        if (p.getColor() != movingPieceColor) {
+        if (p.getColor() != movingPiece.getColor()) {
             return false;
         }
 
-        if (movingPieceColor == standingPieceColor) {
+        if (movingPiece.getColor() == standingPiece.getColor()) {
             return false;
         }
 
-        if (movingPieceType == PieceEnum.KING) {
+        if (movingPiece instanceof King) {
             return isKingsMoveLegal(b, con, verFrom, horFrom, verTo, horTo);
-        } else if (movingPieceType == PieceEnum.QUEEN) {
+        } else if (movingPiece instanceof Queen) {
             return isQueensMoveLegal(b, verFrom, horFrom, verTo, horTo);
-        } else if (movingPieceType == PieceEnum.BISHOP) {
+        } else if (movingPiece instanceof Bishop) {
             return isBishopsMoveLegal(b, verFrom, horFrom, verTo, horTo);
-        } else if (movingPieceType == PieceEnum.KNIGHT) {
+        } else if (movingPiece instanceof Knight) {
             return isKnightsMoveLegal(b, verFrom, horFrom, verTo, horTo);
-        } else if (movingPieceType == PieceEnum.ROOK) {
+        } else if (movingPiece instanceof Rook) {
             return isRooksMoveLegal(b, verFrom, horFrom, verTo, horTo);
         } else { // pawn
             return isPawnsMoveLegal(b, con, verFrom, horFrom, verTo, horTo);
@@ -80,10 +77,10 @@ public class Rules {
     }
 
     private static boolean isPawnsMoveLegal(Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
-        Color movingPieceColor = b.getPieceColor(verFrom, horFrom);
-        // Color of stanignPiece can be null if there's no piece on the location
-        Color standingPieceColor = b.getPieceColor(verTo, horTo);
-        if (movingPieceColor == Color.BLACK) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
+        // Piece can be null if there's no piece on the location
+        Piece standingPiece = b.getPiece(verTo, horTo);
+        if (movingPiece.getColor() == Color.BLACK) {
             // first move
             // moving forward
 //            if(verFrom == 1)
@@ -140,9 +137,9 @@ public class Rules {
             verRight = verI;
             horRight = horI;
         }
-        
+
         // upward diagonal
-        if(horLeft < horRight){
+        if (horLeft < horRight) {
             //TODO
         } else { // downward diagonal
             //TODO
