@@ -16,6 +16,19 @@ public class Main {
     public static void main(String[] args) {
         // https://codereview.stackexchange.com/questions/71790/design-a-chess-game-using-object-oriented-principles
         
+            Board b = new Board();
+//            System.out.println(Board.positionNumToIndex(5));
+//            System.out.println(Board.positionCharToIndex('b'));
+//            System.out.println(Board.indexToPositionNum(5));
+//            System.out.println(Board.indexToPositionChar(2));
+            b.printBoard();
+
+//            Player p = new Player(Color.BLACK);
+//            Color c = p.getColor();
+//            c = Color.WHITE;
+//            System.out.println("Player's color = " + p.getColor());
+
+
     }
     
 }
