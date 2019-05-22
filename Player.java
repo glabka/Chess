@@ -10,7 +10,7 @@
  */
 public class Player {
     
-    Color c;
+   private final Color c;
     
     public Player(Color c){
         this.c = c;
