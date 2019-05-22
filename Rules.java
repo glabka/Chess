@@ -23,6 +23,34 @@ public class Rules {
 //    public static boolean move(Board b, Player p, int verFrom, int horFrom, int verTo, int horTo){
 //        if()
 //    }
+    public void testing(Player p, Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
+
+    }
+
+    public void testing(Board b) {
+//        System.out.println("true: " + isVerticalPathFree(b, 6, 2, 1, 2));
+//        System.out.println("false: " + isVerticalPathFree(b, 1, 2, 7, 2));
+//        System.out.println("");
+//        System.out.println("true: " + isHorizontalPathFree(b, 1, 2, 1, 6));
+//        System.out.println("false: " + isHorizontalPathFree(b, 1, 2, 1, 7));
+
+//        System.out.println("true: " + isDiagonalPathFree(b, 4, 5, 1, 2));
+//        System.out.println("false: " + isDiagonalPathFree(b, 5, 6, 1, 2));
+//        System.out.println("true: " + isDiagonalPathFree(b, 6, 2, 3, 5));
+//        System.out.println("true: " + isDiagonalPathFree(b, 6, 2, 3, 5));
+//        System.out.println("false: " + isDiagonalPathFree(b, 1, 7, 6, 2));
+//        System.out.println("true: " + isVerticalPathFree(b, 3, 5, 4, 5));
+        System.out.println("true: " + isPathBetweenFree(b, 6, 2, 3, 5));
+        System.out.println("false: " + isPathBetweenFree(b, 1, 7, 6, 2));
+        System.out.println("");
+        System.out.println("true: " + isPathBetweenFree(b, 6, 2, 1, 2));
+        System.out.println("false: " + isPathBetweenFree(b, 1, 2, 7, 2));
+        System.out.println("");
+        System.out.println("true: " + isPathBetweenFree(b, 1, 2, 1, 6));
+        System.out.println("false: " + isPathBetweenFree(b, 1, 2, 1, 7));
+
+    }
+
     public static boolean isMoveLegal(Player p, Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
         // Piece can be null if there's no piece on the location
         Piece movingPiece = b.getPiece(verFrom, horFrom);
@@ -81,12 +109,18 @@ public class Rules {
         // Piece can be null if there's no piece on the location
         Piece standingPiece = b.getPiece(verTo, horTo);
         if (movingPiece.getColor() == Color.BLACK) {
-            // first move
-            // moving forward
-//            if(verFrom == 1)
-
-            // normal capture
+            // first move - two steps
+            if (verFrom == 1 && verTo == 3 && verFrom == verTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+                return true;
+            } // moving forward
+            else if (verFrom + 1 == verTo && horFrom == horTo ){
+                
+            }
+                // normal capture
             // en passant
+            {
+                
+            }
         }
 
     }
@@ -96,28 +130,55 @@ public class Rules {
             throw new IllegalArgumentException("Entered positions are not on the same line (vertical, horizontal or diagonal).");
         }
         if (verI == verJ) {
-            return isVerticalPathFree(b, verI, horI, verJ, horJ);
-        } else if (horI == horJ) {
             return isHorizontalPathFree(b, verI, horI, verJ, horJ);
+        } else if (horI == horJ) {
+            return isVerticalPathFree(b, verI, horI, verJ, horJ);
         } else { // diagonal
             return isDiagonalPathFree(b, verI, horI, verJ, horJ);
         }
     }
 
-    private static boolean isVerticalPathFree(Board b, int verI, int horI, int verJ, int horJ) {
-        int numOfPositionBetween = horI - horJ - 1;
+    private static boolean isHorizontalPathFree(Board b, int verI, int horI, int verJ, int horJ) {
+        int numOfPositionBetween = Math.abs(horI - horJ) - 1;
+        int verLeft, horLeft, verRight, horRight;
+        if (horI < horJ) {
+            verLeft = verI;
+            horLeft = horI;
+            verRight = verJ;
+            horRight = horJ;
+        } else {
+            verLeft = verJ;
+            horLeft = horJ;
+            verRight = verI;
+            horRight = horI;
+        }
         for (int i = 0; i < numOfPositionBetween; i++) {
-            if (b.getPieceType(verI, horI + i + 1) != null) {
+            System.out.print(verLeft + "," + (horLeft + i + 1) + "; "); // debug
+            if (b.getPiece(verLeft, horLeft + i + 1) != null) {
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean isHorizontalPathFree(Board b, int verI, int horI, int verJ, int horJ) {
-        int numOfPositionBetween = verI - verJ - 1;
+    private static boolean isVerticalPathFree(Board b, int verI, int horI, int verJ, int horJ) {
+        int numOfPositionBetween = Math.abs(verI - verJ) - 1;
+        int verDown, horDown, verUp, horUp;
+        if (verI < verJ) {
+            verDown = verI;
+            horDown = horI;
+            verUp = verJ;
+            horUp = horJ;
+        } else {
+            verDown = verJ;
+            horDown = horJ;
+            verUp = verI;
+            horUp = horI;
+        }
+
         for (int i = 0; i < numOfPositionBetween; i++) {
-            if (b.getPieceType(verI + i + 1, horI) != null) {
+            System.out.print((verDown + i + 1) + "," + horDown + "; "); // debug
+            if (b.getPiece(verDown + i + 1, horDown) != null) {
                 return false;
             }
         }
@@ -126,7 +187,7 @@ public class Rules {
 
     private static boolean isDiagonalPathFree(Board b, int verI, int horI, int verJ, int horJ) {
         int verLeft, verRight, horLeft, horRight;
-        if (verI < verJ) {
+        if (horI < horJ) {
             verLeft = verI;
             horLeft = horI;
             verRight = verJ;
@@ -138,12 +199,22 @@ public class Rules {
             horRight = horI;
         }
 
-        // upward diagonal
-        if (horLeft < horRight) {
-            //TODO
-        } else { // downward diagonal
-            //TODO
+        int numOfPositionsBetween = horRight - horLeft - 1;
+        int d;
+        // downward diagonal
+        if (verLeft < verRight) {
+            d = 1;
+        } else { // upward diagonal
+            d = -1;
         }
+
+        for (int i = 0; i < numOfPositionsBetween; i++) {
+            System.out.print((verLeft + i * d + d) + "," + (horLeft + i + 1) + "; "); // debug
+            if (b.getPiece(verLeft + i * d + d, horLeft + i + 1) != null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static boolean onSameDiagonal(int verI, int horI, int verJ, int horJ) {

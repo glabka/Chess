@@ -38,6 +38,18 @@ public class Board {
         }
     }
 
+    public Board(Piece[][] board) {
+        if (board.length != 8) {
+            throw new IllegalArgumentException("Board's dimentions have to be 8x8.");
+        }
+        for (int i = 0; i < board.length; i++) {
+            if (board[i].length != 8) {
+                throw new IllegalArgumentException("Board's dimentions have to be 8x8.");
+            }
+        }
+        this.board = board;
+    }
+
     public static int positionNumToIndex(int n) {
         if (n < 1 || n > 8) {
             throw new IllegalArgumentException();
@@ -70,17 +82,17 @@ public class Board {
     public void printBoard() {
         System.out.print(" ");
         for (int i = 0; i < board.length; i++) {
-            System.out.print("╳" + indexToPositionChar(i));
+//            System.out.print("╳" + indexToPositionChar(i));
+            System.out.print("╳" + i);// debug
         }
         System.out.println("");
-        
+
         for (int i = 0; i < board.length; i++) {
-            System.out.print(indexToPositionNum(i));
+//            System.out.print(indexToPositionNum(i));
+            System.out.print(i); // debug
             for (int j = 0; j < board[i].length; j++) {
                 System.out.print(" ");
                 if (board[i][j] == null) {
-//                    System.out.print("╳");
-//                    System.out.print("◯");
                     if (((i + 1) % 2 == 0 && (j + 1) % 2 == 0) || ((i + 1) % 2 != 0 && (j + 1) % 2 != 0)) {
                         System.out.print("╳");
                     } else {
@@ -115,41 +127,38 @@ public class Board {
             System.out.println("");
         }
     }
-    
-    
-    public boolean move(Player p, MovesContainer con, int iFrom, char cFrom, int iTo, char cTo){
+
+    public boolean move(Player p, MovesContainer con, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = positionNumToIndex(iFrom);
         int horFrom = positionCharToIndex(cFrom);
         int verTo = positionNumToIndex(iTo);
         int horTo = positionCharToIndex(cTo);
         return move(p, con, verFrom, horFrom, verTo, horTo);
     }
-    
-    public boolean move(Player p, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo){
-        if(p == null){
+
+    public boolean move(Player p, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
+        if (p == null) {
             throw new IllegalArgumentException("Player can't be null.");
         }
-        if (con == null){
+        if (con == null) {
             throw new IllegalArgumentException("MovesContainer can't be null.");
         }
-        if(!isIndexOnBoard(verFrom)){
+        if (!isIndexOnBoard(verFrom)) {
             throw new IllegalArgumentException("position verFrom = " + verFrom + " is out of bounds.");
-        } else if(!isIndexOnBoard(horFrom)){
+        } else if (!isIndexOnBoard(horFrom)) {
             throw new IllegalArgumentException("position horFrom = " + horFrom + " is out of bounds.");
-        } else if(!isIndexOnBoard(verTo)){
+        } else if (!isIndexOnBoard(verTo)) {
             throw new IllegalArgumentException("position verTo = " + verTo + " is out of bounds.");
-        }  else if(!isIndexOnBoard(horTo)){
+        } else if (!isIndexOnBoard(horTo)) {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
-        
-        
-        
+
     }
-    
-    public Piece getPiece(int ver, int hor){
+
+    public Piece getPiece(int ver, int hor) {
         return board[ver][hor];
     }
-    
+
 //    public PieceEnum getPieceType(int ver, int hor){
 //        if(!isIndexOnBoard(ver)){
 //            throw new IllegalArgumentException("position ver = " + ver + " is out of bounds.");
@@ -181,9 +190,8 @@ public class Board {
 //            return board[ver][hor].getColor();
 //        }
 //    }
-    
-    public static boolean isIndexOnBoard(int index){
-        if(index >= 0 || index < 8){
+    public static boolean isIndexOnBoard(int index) {
+        if (index >= 0 || index < 8) {
             return true;
         } else {
             return false;
