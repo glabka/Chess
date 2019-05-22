@@ -15,7 +15,7 @@ public class MovesContainer {
     private int horFrom;
     private int verTo;
     private int horTo;
-    private PieceEnum pieceType;
+    private Piece piece;
     private Color pieceColor;
 
     // variables needed for Castle evaluation
@@ -26,8 +26,8 @@ public class MovesContainer {
     private boolean blackRook1Moved = false; // the rook on the left side
     private boolean blackRook2Moved = false;
 
-    public void storeMove(PieceEnum pieceType, Color pieceColor, int verFrom, int horFrom, int verTo, int horTo) {
-        this.pieceType = pieceType;
+    public void storeMove(Piece piece, int verFrom, int horFrom, int verTo, int horTo) {
+        this.piece = piece;
         this.pieceColor = pieceColor;
         this.verFrom = verFrom;
         this.horFrom = horFrom;
@@ -75,12 +75,8 @@ public class MovesContainer {
         return horTo;
     }
 
-    public PieceEnum getPieceType() {
-        return pieceType;
-    }
-
-    public Color getPieceColor() {
-        return pieceColor;
+    public Piece getPiece() {
+        return piece;
     }
 
     public boolean isWhiteKingMoved() {
