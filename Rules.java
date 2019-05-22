@@ -64,7 +64,7 @@ public class Rules {
             return false;
         }
 
-        if (movingPiece.getColor() == standingPiece.getColor()) {
+        if (standingPiece != null && movingPiece.getColor() == standingPiece.getColor()) {
             return false;
         }
 
@@ -110,17 +110,36 @@ public class Rules {
         Piece standingPiece = b.getPiece(verTo, horTo);
         if (movingPiece.getColor() == Color.BLACK) {
             // first move - two steps
-            if (verFrom == 1 && verTo == 3 && verFrom == verTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            if (verFrom == 1 && verTo == 3 && horFrom == horTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
                 return true;
             } // moving forward
-            else if (verFrom + 1 == verTo && horFrom == horTo ){
-                
+            else if (verFrom + 1 == verTo && horFrom == horTo && standingPiece == null) {
+                return true;
+            } // normal capture
+            else if (verFrom + 1 == verTo && (horFrom + 1 == horTo || horFrom - 1 == horTo)
+                    && standingPiece != null && standingPiece.getColor() != movingPiece.getColor()) {
+                return true;
+            } else {
+                return false;
             }
-                // normal capture
             // en passant
-            {
-                
+            // TODO
+        } else { // movingPiece == Color.WHITE
+             // first move - two steps
+            if (verFrom == 6 && verTo == 4 && horFrom == horTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+                return true;
+            } // moving forward
+            else if (verFrom - 1 == verTo && horFrom == horTo && standingPiece == null) {
+                return true;
+            } // normal capture
+            else if (verFrom - 1 == verTo && (horFrom + 1 == horTo || horFrom - 1 == horTo)
+                    && standingPiece != null && standingPiece.getColor() != movingPiece.getColor()) {
+                return true;
+            } else {
+                return false;
             }
+            // en passant
+            // TODO
         }
 
     }
@@ -153,7 +172,7 @@ public class Rules {
             horRight = horI;
         }
         for (int i = 0; i < numOfPositionBetween; i++) {
-            System.out.print(verLeft + "," + (horLeft + i + 1) + "; "); // debug
+//            System.out.print(verLeft + "," + (horLeft + i + 1) + "; "); // debug
             if (b.getPiece(verLeft, horLeft + i + 1) != null) {
                 return false;
             }
@@ -177,7 +196,7 @@ public class Rules {
         }
 
         for (int i = 0; i < numOfPositionBetween; i++) {
-            System.out.print((verDown + i + 1) + "," + horDown + "; "); // debug
+//            System.out.print((verDown + i + 1) + "," + horDown + "; "); // debug
             if (b.getPiece(verDown + i + 1, horDown) != null) {
                 return false;
             }
@@ -209,7 +228,7 @@ public class Rules {
         }
 
         for (int i = 0; i < numOfPositionsBetween; i++) {
-            System.out.print((verLeft + i * d + d) + "," + (horLeft + i + 1) + "; "); // debug
+//            System.out.print((verLeft + i * d + d) + "," + (horLeft + i + 1) + "; "); // debug
             if (b.getPiece(verLeft + i * d + d, horLeft + i + 1) != null) {
                 return false;
             }

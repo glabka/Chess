@@ -152,7 +152,13 @@ public class Board {
         } else if (!isIndexOnBoard(horTo)) {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
-
+        if (Rules.isMoveLegal(p, this, con, verFrom, horFrom, verTo, horTo)) {
+            board[verTo][horTo] = board[verFrom][horFrom];
+            board[verFrom][horFrom] = null;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public Piece getPiece(int ver, int hor) {

@@ -25,7 +25,7 @@ public class MovesContainer {
     private boolean blackKingMoved = false;
     private boolean blackRook1Moved = false; // the rook on the left side
     private boolean blackRook2Moved = false;
-
+    
     public void storeMove(Piece piece, int verFrom, int horFrom, int verTo, int horTo) {
         this.piece = piece;
         this.pieceColor = pieceColor;
@@ -79,27 +79,27 @@ public class MovesContainer {
         return piece;
     }
 
-    public boolean isWhiteKingMoved() {
+    public boolean didWhiteKingMove() {
         return whiteKingMoved;
     }
 
-    public boolean isWhiteRook1Moved() {
+    public boolean didWhiteRook1Move() {
         return whiteRook1Moved;
     }
 
-    public boolean isWhiteRook2Moved() {
+    public boolean didWhiteRook2Move() {
         return whiteRook2Moved;
     }
 
-    public boolean isBlackKingMoved() {
+    public boolean didBlackKingMove() {
         return blackKingMoved;
     }
 
-    public boolean isBlackRook1Moved() {
+    public boolean didBlackRook1Move() {
         return blackRook1Moved;
     }
 
-    public boolean isBlackRook2Moved() {
+    public boolean didBlackRook2Move() {
         return blackRook2Moved;
     }
 
