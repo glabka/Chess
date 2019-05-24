@@ -184,17 +184,19 @@ public class Rules {
         for (int verFrom = 0; verFrom < b.getVerSize(); verFrom++) {
             for (int horFrom = 0; horFrom < b.geHorSize(); horFrom++) {
                 Piece attackingPiece = b.getPiece(verFrom, horFrom);
+                if (attackingPiece == null || attackingPiece.getColor() == kingsColor) {
+                    continue;
+                }
                 // King can't check another King since itselve it would be in check
                 // therefore King can't move into another's King range
                 if (attackingPiece instanceof King
                         && (verFrom == ver || verFrom + 1 == ver || verFrom - 1 == ver)
                         && (horFrom == hor || horFrom + 1 == hor || horFrom - 1 == hor)) {
                     return true;
-                } else if (attackingPiece != null && attackingPiece.getColor() == Color.opossiteColor(kingsColor)) {
-                    if (isMoveLegal(attackingPiece.getColor(), b, con, verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
-                        System.out.println("Position " + verFrom + ", " + horFrom + " is checked."); // debug
-                        return true;
-                    }
+                } else if (isMoveLegal(attackingPiece.getColor(), b, con, verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
+                    System.out.println("Position " + ver + ", " + hor + " is checked."); // debug
+                    return true;
+
                 }
             }
         }
