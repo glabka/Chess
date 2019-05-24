@@ -51,7 +51,7 @@ public class Rules {
 
     }
 
-    public static boolean isMoveLegal(Player p, Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
+    public static boolean isMoveLegal(Color playersColor, Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
         // Piece can be null if there's no piece on the location
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         Piece standingPiece = b.getPiece(verTo, horTo);
@@ -60,7 +60,7 @@ public class Rules {
             return false;
         }
 
-        if (p.getColor() != movingPiece.getColor()) {
+        if (playersColor != movingPiece.getColor()) {
             return false;
         }
 
@@ -85,23 +85,58 @@ public class Rules {
     }
 
     private static boolean isKingsMoveLegal(Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //isPositionInCheck(Board b, Color kingsColor, MovesContainer con, int ver, int hor){
+        Color kingsColor = b.getPiece(verFrom, horFrom).getColor();
+        if (!isPositionInCheck(b, kingsColor, con, verTo, horTo)
+                && (verFrom == verTo || verFrom + 1 == verTo || verFrom - 1 == verTo)
+                && (horFrom == horTo || horFrom + 1 == horTo || horFrom - 1 == horTo)) {
+            return true;
+        } // TODO: Castling
+        else if (false) {
+            return false;
+        } else {
+            return false;
+        }
     }
 
     private static boolean isQueensMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            return true;
+        } else if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            return true;
+        } else if (verFrom != verTo && horFrom == horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static boolean isBishopsMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static boolean isKnightsMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if ((verFrom + 2 == verTo || verFrom - 2 == verTo) && (horFrom + 1 == horTo || horFrom - 1 == horTo)) {
+            return true;
+        } else if ((verFrom + 1 == verTo || verFrom - 1 == verTo) && (horFrom + 2 == horTo || horFrom - 2 == horTo)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static boolean isRooksMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            return true;
+        } else if (verFrom != verTo && horFrom == horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private static boolean isPawnsMoveLegal(Board b, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
@@ -125,7 +160,7 @@ public class Rules {
             // en passant
             // TODO
         } else { // movingPiece == Color.WHITE
-             // first move - two steps
+            // first move - two steps
             if (verFrom == 6 && verTo == 4 && horFrom == horTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
                 return true;
             } // moving forward
@@ -142,6 +177,29 @@ public class Rules {
             // TODO
         }
 
+    }
+
+    // MovesContainer wouldn't be necessary if it weren't requiered by isMoveLegal method
+    private static boolean isPositionInCheck(Board b, Color kingsColor, MovesContainer con, int ver, int hor) {
+        for (int verFrom = 0; verFrom < b.getVerSize(); verFrom++) {
+            for (int horFrom = 0; horFrom < b.geHorSize(); horFrom++) {
+                Piece attackingPiece = b.getPiece(verFrom, horFrom);
+                // King can't check another King since itselve it would be in check
+                // therefore King can't move into another's King range
+                if (attackingPiece instanceof King
+                        && (verFrom == ver || verFrom + 1 == ver || verFrom - 1 == ver)
+                        && (horFrom == hor || horFrom + 1 == hor || horFrom - 1 == hor)) {
+                    return true;
+                } else if (attackingPiece != null && attackingPiece.getColor() == Color.opossiteColor(kingsColor)) {
+                    if (isMoveLegal(attackingPiece.getColor(), b, con, verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
+                        System.out.println("Position " + verFrom + ", " + horFrom + " is checked."); // debug
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private static boolean isPathBetweenFree(Board b, int verI, int horI, int verJ, int horJ) {

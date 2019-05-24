@@ -152,7 +152,7 @@ public class Board {
         } else if (!isIndexOnBoard(horTo)) {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
-        if (Rules.isMoveLegal(p, this, con, verFrom, horFrom, verTo, horTo)) {
+        if (Rules.isMoveLegal(p.getColor(), this, con, verFrom, horFrom, verTo, horTo)) {
             board[verTo][horTo] = board[verFrom][horFrom];
             board[verFrom][horFrom] = null;
             return true;
@@ -202,6 +202,14 @@ public class Board {
         } else {
             return false;
         }
+    }
+    
+    public int getVerSize(){
+        return board.length;
+    }
+    
+    public int geHorSize(){
+        return board[0].length;
     }
 
 }

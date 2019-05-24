@@ -9,5 +9,12 @@
  * @author glabka
  */
 public enum Color {
-    BLACK, WHITE
+    BLACK, WHITE;
+    public static Color opossiteColor(Color c){
+        if(c == BLACK){
+            return WHITE;
+        } else {
+            return BLACK;
+        }
+    }
 }

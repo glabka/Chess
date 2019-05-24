@@ -45,14 +45,16 @@ public class Main {
         while (true) {
             b.printBoard();
             Input.read4Int(positions);
-            if (!b.move(currentPlayer, con, positions[0], positions[1], positions[2], positions[3])) {
+            if (b.move(currentPlayer, con, positions[0], positions[1], positions[2], positions[3])) {
+                if (currentPlayer == p1) {
+                    currentPlayer = p2;
+                } else {
+                    currentPlayer = p1;
+                }
+            } else {
                 System.out.println("The move is not possible.");
             }
-            if(currentPlayer == p1){
-                currentPlayer = p2;
-            } else {
-                currentPlayer = p1;
-            }
+
         }
     }
 
