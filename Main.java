@@ -73,12 +73,12 @@ public class Main {
         Player p1 = new Player(Color.WHITE);
         Player p2 = new Player(Color.BLACK);
         Player currentPlayer = p1;
-        MovesContainer con = new MovesContainer();
+        MoveTracker mt = new MoveTracker();
 
         for (int i = 0; i < positions.length; i++) {
             b.printBoard();
             System.out.println(positions[i][0] + " " + positions[i][1] + " " + positions[i][2] + " " + positions[i][3]);
-            if (b.move(currentPlayer, con, positions[i][0], positions[i][1], positions[i][2], positions[i][3])) {
+            if (Rules.move(currentPlayer, b, mt, positions[i][0], positions[i][1], positions[i][2], positions[i][3])) {
                 if (currentPlayer == p1) {
                     currentPlayer = p2;
                 } else {

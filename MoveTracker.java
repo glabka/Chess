@@ -8,7 +8,7 @@
  *
  * @author glabka
  */
-public class MovesContainer {
+public class MoveTracker {
 
     // variables containing information about last move
     private int verFrom;
@@ -20,12 +20,12 @@ public class MovesContainer {
 
     // variables needed for Castle evaluation
     private boolean whiteKingMoved = false;
-    private boolean whiteRook1Moved = false; // the rook on the left side
-    private boolean whiteRook2Moved = false;
+    private boolean whiteKingsideRookMoved = false; // the rook on the left side
+    private boolean whiteQueensideRookMoved = false;
     private boolean blackKingMoved = false;
-    private boolean blackRook1Moved = false; // the rook on the left side
-    private boolean blackRook2Moved = false;
-    
+    private boolean blackKingsideRookMoved = false; // the rook on the left side
+    private boolean blackQueensideRookMoved = false;
+
     public void storeMove(Piece piece, int verFrom, int horFrom, int verTo, int horTo) {
         this.piece = piece;
         this.pieceColor = pieceColor;
@@ -35,7 +35,7 @@ public class MovesContainer {
         this.horTo = horTo;
     }
 
-    public void storeKingMove(Color color) {
+    public void storeKingMoved(Color color) {
         if (color == Color.WHITE) {
             this.whiteKingMoved = true;
         } else {
@@ -43,19 +43,19 @@ public class MovesContainer {
         }
     }
 
-    public void storeRook1Move(Color color) {
+    public void storeKingsideRookMoved(Color color) {
         if (color == Color.WHITE) {
-            this.whiteRook1Moved = true;
+            this.whiteKingsideRookMoved = true;
         } else {
-            this.blackRook1Moved = true;
+            this.blackKingsideRookMoved = true;
         }
     }
 
-    public void storeRook2Move(Color color) {
+    public void storeQueensideRookMoved(Color color) {
         if (color == Color.WHITE) {
-            this.whiteRook2Moved = true;
+            this.whiteQueensideRookMoved = true;
         } else {
-            this.blackRook2Moved = true;
+            this.blackQueensideRookMoved = true;
         }
     }
 
@@ -79,28 +79,28 @@ public class MovesContainer {
         return piece;
     }
 
-    public boolean didWhiteKingMove() {
-        return whiteKingMoved;
+    public boolean kingMoved(Color color) {
+        if (color == Color.WHITE) {
+            return whiteKingMoved;
+        } else {
+            return blackKingMoved;
+        }
     }
 
-    public boolean didWhiteRook1Move() {
-        return whiteRook1Moved;
+    public boolean kingsideRookMoved(Color color) {
+        if (color == Color.WHITE) {
+            return whiteKingsideRookMoved;
+        } else {
+            return blackKingsideRookMoved;
+        }
     }
 
-    public boolean didWhiteRook2Move() {
-        return whiteRook2Moved;
-    }
-
-    public boolean didBlackKingMove() {
-        return blackKingMoved;
-    }
-
-    public boolean didBlackRook1Move() {
-        return blackRook1Moved;
-    }
-
-    public boolean didBlackRook2Move() {
-        return blackRook2Moved;
+    public boolean queensideRookMoved(Color color) {
+        if (color == Color.WHITE) {
+            return whiteQueensideRookMoved;
+        } else {
+            return blackQueensideRookMoved;
+        }
     }
 
 }

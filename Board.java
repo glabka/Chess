@@ -128,39 +128,50 @@ public class Board {
         }
     }
 
-    public boolean move(Player p, MovesContainer con, int iFrom, char cFrom, int iTo, char cTo) {
-        int verFrom = positionNumToIndex(iFrom);
-        int horFrom = positionCharToIndex(cFrom);
-        int verTo = positionNumToIndex(iTo);
-        int horTo = positionCharToIndex(cTo);
-        return move(p, con, verFrom, horFrom, verTo, horTo);
+    public void movePiece(int verFrom, int horFrom, int verTo, int horTo) {
+        checkPosition(verFrom, horFrom, verTo, horTo);
+        
+        Piece piece = board[verFrom][horFrom];
+        if(piece == null){
+            throw new NoPieceAtGivenPositionException("No piece at position " + verFrom + ", " + horFrom + ".");
+        }
+        
+        board[verTo][horTo] = piece;
+        board[verFrom][horFrom] = null;
     }
-
-    public boolean move(Player p, MovesContainer con, int verFrom, int horFrom, int verTo, int horTo) {
-        if (p == null) {
-            throw new IllegalArgumentException("Player can't be null.");
+    
+    public void deletePiece(int ver, int hor){
+        checkPosition(ver, hor);
+        
+        Piece piece = board[ver][hor];
+        if(piece == null){
+            throw new NoPieceAtGivenPositionException("No piece at position " + ver + ", " + hor + ".");
         }
-        if (con == null) {
-            throw new IllegalArgumentException("MovesContainer can't be null.");
-        }
-        if (!isIndexOnBoard(verFrom)) {
+        
+        board[ver][hor] = null;        
+    }
+    
+    // throws exception if position is out of bounds
+    private void checkPosition(int verFrom, int horFrom, int verTo, int horTo){
+        if (!Board.isIndexOnBoard(verFrom)) {
             throw new IllegalArgumentException("position verFrom = " + verFrom + " is out of bounds.");
-        } else if (!isIndexOnBoard(horFrom)) {
+        } else if (!Board.isIndexOnBoard(horFrom)) {
             throw new IllegalArgumentException("position horFrom = " + horFrom + " is out of bounds.");
-        } else if (!isIndexOnBoard(verTo)) {
+        } else if (!Board.isIndexOnBoard(verTo)) {
             throw new IllegalArgumentException("position verTo = " + verTo + " is out of bounds.");
-        } else if (!isIndexOnBoard(horTo)) {
+        } else if (!Board.isIndexOnBoard(horTo)) {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
-        if (Rules.isMoveLegal(p.getColor(), this, con, verFrom, horFrom, verTo, horTo)) {
-            board[verTo][horTo] = board[verFrom][horFrom];
-            board[verFrom][horFrom] = null;
-            return true;
-        } else {
-            return false;
+    }
+    
+    private void checkPosition(int ver, int hor){
+        if (!Board.isIndexOnBoard(ver)) {
+            throw new IllegalArgumentException("position verFrom = " + ver + " is out of bounds.");
+        } else if (!Board.isIndexOnBoard(hor)) {
+            throw new IllegalArgumentException("position horFrom = " + hor + " is out of bounds.");
         }
     }
-
+    
     public Piece getPiece(int ver, int hor) {
         return board[ver][hor];
     }
@@ -203,12 +214,12 @@ public class Board {
             return false;
         }
     }
-    
-    public int getVerSize(){
+
+    public int getVerSize() {
         return board.length;
     }
-    
-    public int geHorSize(){
+
+    public int geHorSize() {
         return board[0].length;
     }
 
