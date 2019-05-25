@@ -77,14 +77,41 @@ public class Rules {
         } else if (!Board.isIndexOnBoard(horTo)) {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
+
         MoveType mType = new MoveType();
         if (isMoveLegal(p.getColor(), b, mt, mType, verFrom, horFrom, verTo, horTo)) {
-            // TODO: moving logic (even for Castling and en passant)
-            if(mType.getMoveType() == MovesEnum.STANDARD){
+            Piece movingPiece = b.getPiece(verFrom, horFrom);
+
+            // Tracking whether King or rooks moved (important for castling)
+            if (movingPiece instanceof King) {
+                mt.storeKingMoved(movingPiece.getColor());
+            } else if (movingPiece instanceof Rook) {
+                if (horFrom == 0) {
+                    mt.storeQueensideRookMoved(movingPiece.getColor());
+                } else {
+                    mt.storeKingsideRookMoved(movingPiece.getColor());
+                }
+            }
+
+            mt.storeMove(movingPiece, verFrom, horFrom, verTo, horTo);
+            if (mType.getMoveType() == MovesEnum.STANDARD) {
                 b.movePiece(verFrom, horFrom, verTo, horTo);
-            } else if (mType.getMoveType() == MovesEnum.EN_PASSANT){
-                // TODO
-            } // TODO: castling
+            } else if (mType.getMoveType() == MovesEnum.EN_PASSANT) {
+                b.movePiece(verFrom, horFrom, verTo, horTo);
+                b.deletePiece(verFrom, horTo);
+            } else if (mType.getMoveType() == MovesEnum.WHITE_KINGSIDE_CASTLING) {
+                b.movePiece(verFrom, horFrom, verTo, horTo); // moving king
+                b.movePiece(7, 7, 7, 5); // moving rook
+            } else if (mType.getMoveType() == MovesEnum.BLACK_KINGSIDE_CASTLING) {
+                b.movePiece(verFrom, horFrom, verTo, horTo); // moving king
+                b.movePiece(0, 7, 0, 5); // moving rook
+            } else if (mType.getMoveType() == MovesEnum.WHITE_QUEENSIDE_CASTLING) {
+                b.movePiece(verFrom, horFrom, verTo, horTo);
+                b.movePiece(7, 0, 7, 3); // moving rook
+            } else if (mType.getMoveType() == MovesEnum.BLACK_QUEENSIDE_CASTLING) {
+                b.movePiece(verFrom, horFrom, verTo, horTo);
+                b.movePiece(0, 0, 0, 3); // moving rook
+            }
             return true;
         } else {
             return false;
@@ -112,16 +139,16 @@ public class Rules {
             return isKingsMoveLegal(b, mt, mType, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Queen) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isQueensMoveLegal(b, verFrom, horFrom, verTo, horTo);
+            return isQueensMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Bishop) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isBishopsMoveLegal(b, verFrom, horFrom, verTo, horTo);
+            return isBishopsMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Knight) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isKnightsMoveLegal(b, verFrom, horFrom, verTo, horTo);
+            return isKnightsMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Rook) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isRooksMoveLegal(b, verFrom, horFrom, verTo, horTo);
+            return isRooksMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
         } else { // pawn
             return isPawnsMoveLegal(b, mt, mType, verFrom, horFrom, verTo, horTo);
         }
@@ -129,34 +156,64 @@ public class Rules {
     }
 
     private static boolean isKingsMoveLegal(Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
         Color kingsColor = b.getPiece(verFrom, horFrom).getColor();
+
         if (!isPositionInCheck(b, kingsColor, mt, verTo, horTo)
                 && (verFrom == verTo || verFrom + 1 == verTo || verFrom - 1 == verTo)
                 && (horFrom == horTo || horFrom + 1 == horTo || horFrom - 1 == horTo)) {
             mType.setMoveType(MovesEnum.STANDARD);
             return true;
-        } // TODO: white kingside castling
-        else if (false) { // BE AWARE ROOK HAS TO EXIST
-            mType.setMoveType(MovesEnum.WHITE_KINGSIDE_CASTLING);
-            return false;
-        } // TODO: black kingside castling
-        else if (false) {
-            mType.setMoveType(MovesEnum.BLACK_KINGSIDE_CASTLING);
-            return false;
-        } // TODO: white queenside castling
-        else if (false) {
-            mType.setMoveType(MovesEnum.WHITE_QUEENSIDE_CASTLING);
-            return false;
-        } // TODO: black queenside castling
-        else if (false) {
-            mType.setMoveType(MovesEnum.BLACK_QUEENSIDE_CASTLING);
-            return false;
-        } else {
-            return false;
+        } // white kingside castling
+        else if (!mt.didKingMove(kingsColor) && !mt.didKingsideRookMove(kingsColor)
+                && verFrom == 7 && horFrom == 4 && verTo == 7 && horTo == 6) {
+            Piece rook = b.getPiece(7, 7);
+            if (rook instanceof Rook && rook.getColor() == kingsColor // rook exists
+                    && isPathBetweenFree(b, verFrom, horFrom, 7, 7)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom) && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom + 1)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom + 2)) {
+                mType.setMoveType(MovesEnum.WHITE_KINGSIDE_CASTLING);
+                return true;
+            }
+        } // black kingside castling
+        else if (!mt.didKingMove(kingsColor) && !mt.didKingsideRookMove(kingsColor)
+                && verFrom == 0 && horFrom == 4 && verTo == 0 && horTo == 6) {
+            Piece rook = b.getPiece(0, 7);
+            if (rook instanceof Rook && rook.getColor() == kingsColor // rook exists
+                    && isPathBetweenFree(b, verFrom, horFrom, 0, 7)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom) && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom + 1)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom + 2)) {
+                mType.setMoveType(MovesEnum.BLACK_KINGSIDE_CASTLING);
+                return true;
+            }
+        } // white queenside castling
+        else if (!mt.didKingMove(kingsColor) && !mt.didKingsideRookMove(kingsColor)
+                && verFrom == 7 && horFrom == 4 && verTo == 7 && horTo == 2) {
+            Piece rook = b.getPiece(7, 0);
+            if (rook instanceof Rook && rook.getColor() == kingsColor // rook exists
+                    && isPathBetweenFree(b, verFrom, horFrom, 7, 0)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom) && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom - 1)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom - 2)) {
+                mType.setMoveType(MovesEnum.WHITE_QUEENSIDE_CASTLING);
+                return true;
+            }
+        } // black queenside castling
+        else if (!mt.didKingMove(kingsColor) && !mt.didKingsideRookMove(kingsColor)
+                && verFrom == 0 && horFrom == 4 && verTo == 0 && horTo == 2) {
+            Piece rook = b.getPiece(0, 0);
+            if (rook instanceof Rook && rook.getColor() == kingsColor // rook exists
+                    && isPathBetweenFree(b, verFrom, horFrom, 0, 0)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom) && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom - 1)
+                    && !isPositionInCheck(b, kingsColor, mt, verFrom, horFrom - 2)) {
+                mType.setMoveType(MovesEnum.BLACK_QUEENSIDE_CASTLING);
+                return true;
+            }
         }
+        return false;
     }
 
-    private static boolean isQueensMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isQueensMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
         } else if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
@@ -168,7 +225,8 @@ public class Rules {
         }
     }
 
-    private static boolean isBishopsMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isBishopsMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
         } else {
@@ -176,7 +234,8 @@ public class Rules {
         }
     }
 
-    private static boolean isKnightsMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isKnightsMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
         if ((verFrom + 2 == verTo || verFrom - 2 == verTo) && (horFrom + 1 == horTo || horFrom - 1 == horTo)) {
             return true;
         } else if ((verFrom + 1 == verTo || verFrom - 1 == verTo) && (horFrom + 2 == horTo || horFrom - 2 == horTo)) {
@@ -186,7 +245,8 @@ public class Rules {
         }
     }
 
-    private static boolean isRooksMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isRooksMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
         } else if (verFrom != verTo && horFrom == horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
@@ -200,6 +260,12 @@ public class Rules {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         // Piece can be null if there's no piece on the location
         Piece standingPiece = b.getPiece(verTo, horTo);
+
+        // debug
+//        System.out.println(mt.getPiece() instanceof Pawn);
+//        System.out.println("mt verFrom = " + mt.getVerFrom());
+//        System.out.println("mt verTo = " + mt.getVerTo());
+        // end of debug
         if (movingPiece.getColor() == Color.BLACK) {
             // first move - two steps
             if (verFrom == 1 && verTo == 3 && horFrom == horTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
@@ -214,10 +280,11 @@ public class Rules {
                     && standingPiece != null && standingPiece.getColor() != movingPiece.getColor()) {
                 mType.setMoveType(MovesEnum.STANDARD);
                 return true;
-            } else if (false) {
-                // TODO: en passant
+            } else if (verFrom == 4
+                    && mt.getPiece() instanceof Pawn && mt.getVerFrom() == 6 && mt.getVerTo() == 4 // last move of Pawn was double step
+                    && (horFrom - 1 == mt.getHorTo() || horFrom + 1 == mt.getHorTo()) && horTo == mt.getHorTo()) {
                 mType.setMoveType(MovesEnum.EN_PASSANT);
-                return false;
+                return true;
             } else {
                 return false;
             }
@@ -235,10 +302,11 @@ public class Rules {
                     && standingPiece != null && standingPiece.getColor() != movingPiece.getColor()) {
                 mType.setMoveType(MovesEnum.STANDARD);
                 return true;
-            } else if (false) {
-                // TODO: en passant
+            } else if (verFrom == 3
+                    && mt.getPiece() instanceof Pawn && mt.getVerFrom() == 1 && mt.getVerTo() == 3 // last move of Pawn was double step
+                    && (horFrom - 1 == mt.getHorTo() || horFrom + 1 == mt.getHorTo()) && horTo == mt.getHorTo()) {
                 mType.setMoveType(MovesEnum.EN_PASSANT);
-                return false;
+                return true;
             } else {
                 return false;
             }
@@ -260,10 +328,10 @@ public class Rules {
                         && (verFrom == ver || verFrom + 1 == ver || verFrom - 1 == ver)
                         && (horFrom == hor || horFrom + 1 == hor || horFrom - 1 == hor)) {
                     return true;
-                } else if (isMoveLegal(attackingPiece.getColor(), b, mt, new MoveType(), verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
+                } else if (!(attackingPiece instanceof King) && isMoveLegal(attackingPiece.getColor(), b, mt, new MoveType(), verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
+//                    System.out.println("verFrom = " + verFrom + ", horFrom = " + horFrom); // debug
                     System.out.println("Position " + ver + ", " + hor + " is checked."); // debug
                     return true;
-
                 }
             }
         }

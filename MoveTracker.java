@@ -20,10 +20,10 @@ public class MoveTracker {
 
     // variables needed for Castle evaluation
     private boolean whiteKingMoved = false;
-    private boolean whiteKingsideRookMoved = false; // the rook on the left side
+    private boolean whiteKingsideRookMoved = false; 
     private boolean whiteQueensideRookMoved = false;
     private boolean blackKingMoved = false;
-    private boolean blackKingsideRookMoved = false; // the rook on the left side
+    private boolean blackKingsideRookMoved = false; 
     private boolean blackQueensideRookMoved = false;
 
     public void storeMove(Piece piece, int verFrom, int horFrom, int verTo, int horTo) {
@@ -79,7 +79,7 @@ public class MoveTracker {
         return piece;
     }
 
-    public boolean kingMoved(Color color) {
+    public boolean didKingMove(Color color) {
         if (color == Color.WHITE) {
             return whiteKingMoved;
         } else {
@@ -87,7 +87,7 @@ public class MoveTracker {
         }
     }
 
-    public boolean kingsideRookMoved(Color color) {
+    public boolean didKingsideRookMove(Color color) {
         if (color == Color.WHITE) {
             return whiteKingsideRookMoved;
         } else {
@@ -95,7 +95,7 @@ public class MoveTracker {
         }
     }
 
-    public boolean queensideRookMoved(Color color) {
+    public boolean didQueensideRookMove(Color color) {
         if (color == Color.WHITE) {
             return whiteQueensideRookMoved;
         } else {
