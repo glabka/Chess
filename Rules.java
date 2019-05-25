@@ -10,47 +10,6 @@
  */
 public class Rules {
 
-//    /**
-//     * 
-//     * @param b Board 
-//     * @param p Player
-//     * @param verFrom vertical index from where the piece should be moved
-//     * @param horFrom horizontal index from where the piece should be moved
-//     * @param verTo vertical index to position where the piece should be moved
-//     * @param horTo horizontal index to position where the piece should be moved
-//     * @return true if the move is possible
-//     */
-//    public static boolean move(Board b, Player p, int verFrom, int horFrom, int verTo, int horTo){
-//        if()
-//    }
-    public void testing(Player p, Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
-
-    }
-
-    public void testing(Board b) {
-//        System.out.println("true: " + isVerticalPathFree(b, 6, 2, 1, 2));
-//        System.out.println("false: " + isVerticalPathFree(b, 1, 2, 7, 2));
-//        System.out.println("");
-//        System.out.println("true: " + isHorizontalPathFree(b, 1, 2, 1, 6));
-//        System.out.println("false: " + isHorizontalPathFree(b, 1, 2, 1, 7));
-
-//        System.out.println("true: " + isDiagonalPathFree(b, 4, 5, 1, 2));
-//        System.out.println("false: " + isDiagonalPathFree(b, 5, 6, 1, 2));
-//        System.out.println("true: " + isDiagonalPathFree(b, 6, 2, 3, 5));
-//        System.out.println("true: " + isDiagonalPathFree(b, 6, 2, 3, 5));
-//        System.out.println("false: " + isDiagonalPathFree(b, 1, 7, 6, 2));
-//        System.out.println("true: " + isVerticalPathFree(b, 3, 5, 4, 5));
-        System.out.println("true: " + isPathBetweenFree(b, 6, 2, 3, 5));
-        System.out.println("false: " + isPathBetweenFree(b, 1, 7, 6, 2));
-        System.out.println("");
-        System.out.println("true: " + isPathBetweenFree(b, 6, 2, 1, 2));
-        System.out.println("false: " + isPathBetweenFree(b, 1, 2, 7, 2));
-        System.out.println("");
-        System.out.println("true: " + isPathBetweenFree(b, 1, 2, 1, 6));
-        System.out.println("false: " + isPathBetweenFree(b, 1, 2, 1, 7));
-
-    }
-
     public static boolean move(Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = Board.positionNumToIndex(iFrom);
         int horFrom = Board.positionCharToIndex(cFrom);
