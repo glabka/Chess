@@ -1,4 +1,14 @@
 
+import pieces.Color;
+import pieces.Bishop;
+import pieces.Pawn;
+import pieces.Rook;
+import pieces.King;
+import pieces.Piece;
+import pieces.Knight;
+import pieces.Queen;
+
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,6 +20,9 @@
  */
 public class Rules {
 
+    // TODO: check, check mate (adding states to game propably), transformation of
+    // pawn to something when reaching end, check if in condition of en passant there's
+    // obligation that it is pawn
     public static boolean move(Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = Board.positionNumToIndex(iFrom);
         int horFrom = Board.positionCharToIndex(cFrom);
@@ -80,17 +93,7 @@ public class Rules {
     public static boolean isMoveLegal(Color playersColor, Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
         // Piece can be null if there's no piece on the location
         Piece movingPiece = b.getPiece(verFrom, horFrom);
-        Piece standingPiece = b.getPiece(verTo, horTo);
-
         if (movingPiece == null) {
-            return false;
-        }
-
-        if (playersColor != movingPiece.getColor()) {
-            return false;
-        }
-
-        if (standingPiece != null && movingPiece.getColor() == standingPiece.getColor()) {
             return false;
         }
 
@@ -113,10 +116,33 @@ public class Rules {
         }
 
     }
+    
+    private static boolean isKingInCheck(){
+        
+    }
+
+    private static boolean basicLegalityCheck(Color playersColor, Board b, int verFrom, int horFrom, int verTo, int horTo) {
+        // Piece can be null if there's no piece on the location
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
+        Piece standingPiece = b.getPiece(verTo, horTo);
+
+        if (playersColor != movingPiece.getColor()) {
+            return false;
+        }
+
+        if (standingPiece != null && movingPiece.getColor() == standingPiece.getColor()) {
+            return false;
+        }
+        return true;
+    }
 
     private static boolean isKingsMoveLegal(Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         Color kingsColor = b.getPiece(verFrom, horFrom).getColor();
+
+        if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
+            return false;
+        }
 
         if (!isPositionInCheck(b, kingsColor, mt, verTo, horTo)
                 && (verFrom == verTo || verFrom + 1 == verTo || verFrom - 1 == verTo)
@@ -173,7 +199,9 @@ public class Rules {
 
     private static boolean isQueensMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
-        if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+        if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
+            return false;
+        } else if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
         } else if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
@@ -186,7 +214,9 @@ public class Rules {
 
     private static boolean isBishopsMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
-        if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+        if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
+            return false;
+        } else if (onSameDiagonal(verFrom, horFrom, verTo, horTo) && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
         } else {
             return false;
@@ -195,7 +225,9 @@ public class Rules {
 
     private static boolean isKnightsMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
-        if ((verFrom + 2 == verTo || verFrom - 2 == verTo) && (horFrom + 1 == horTo || horFrom - 1 == horTo)) {
+        if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
+            return false;
+        } else if ((verFrom + 2 == verTo || verFrom - 2 == verTo) && (horFrom + 1 == horTo || horFrom - 1 == horTo)) {
             return true;
         } else if ((verFrom + 1 == verTo || verFrom - 1 == verTo) && (horFrom + 2 == horTo || horFrom - 2 == horTo)) {
             return true;
@@ -206,7 +238,9 @@ public class Rules {
 
     private static boolean isRooksMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
-        if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
+        if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
+            return false;
+        } else if (verFrom == verTo && horFrom != horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
         } else if (verFrom != verTo && horFrom == horTo && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {
             return true;
@@ -225,6 +259,10 @@ public class Rules {
 //        System.out.println("mt verFrom = " + mt.getVerFrom());
 //        System.out.println("mt verTo = " + mt.getVerTo());
         // end of debug
+        if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
+            return false;
+        }
+
         if (movingPiece.getColor() == Color.BLACK) {
             // first move - two steps
             if (verFrom == 1 && verTo == 3 && horFrom == horTo && standingPiece == null && isPathBetweenFree(b, verFrom, horFrom, verTo, horTo)) {

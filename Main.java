@@ -1,4 +1,5 @@
 
+import pieces.Color;
 import java.util.LinkedList;
 
 /*

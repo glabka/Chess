@@ -1,3 +1,5 @@
+package pieces;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,9 +10,9 @@
  *
  * @author glabka
  */
-public class Pawn extends Piece {
-
-    public Pawn(Color color) {
+public class Bishop extends Piece{
+    
+    public Bishop(Color color) {
         super(color);
     }
 }

@@ -1,3 +1,13 @@
+
+import pieces.Color;
+import pieces.Bishop;
+import pieces.Pawn;
+import pieces.Rook;
+import pieces.King;
+import pieces.Piece;
+import pieces.Queen;
+import pieces.Knight;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

@@ -1,3 +1,5 @@
+package pieces;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,9 +10,9 @@
  *
  * @author glabka
  */
-public class Rook extends Piece{
-    
-       public Rook(Color color) {
+public class King extends Piece {
+
+    public King(Color color) {
         super(color);
     }
 }

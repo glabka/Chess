@@ -1,3 +1,5 @@
+package pieces;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,13 +10,16 @@
  *
  * @author glabka
  */
-public enum Color {
-    BLACK, WHITE;
-    public static Color opossiteColor(Color c){
-        if(c == BLACK){
-            return WHITE;
-        } else {
-            return BLACK;
-        }
+public abstract class Piece {
+
+    private final Color color;
+
+    public Piece(Color color) {
+        this.color = color;
     }
+
+    public Color getColor(){
+        return color;
+    }
+
 }

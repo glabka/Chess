@@ -1,3 +1,5 @@
+package pieces;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,9 +10,13 @@
  *
  * @author glabka
  */
-public class Knight extends Piece{
-    
-    public Knight(Color color) {
-        super(color);
+public enum Color {
+    BLACK, WHITE;
+    public static Color opossiteColor(Color c){
+        if(c == BLACK){
+            return WHITE;
+        } else {
+            return BLACK;
+        }
     }
 }
