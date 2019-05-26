@@ -20,10 +20,9 @@ import pieces.Knight;
  */
 public class Board {
 
-    Piece[][] board;
+    Piece[][] board = new Piece[8][8];
 
     public Board() {
-        board = new Piece[8][8];
         board[positionNumToIndex(8)][positionCharToIndex('a')] = new Rook(Color.BLACK);
         board[positionNumToIndex(8)][positionCharToIndex('b')] = new Knight(Color.BLACK);
         board[positionNumToIndex(8)][positionCharToIndex('c')] = new Bishop(Color.BLACK);
@@ -58,6 +57,17 @@ public class Board {
             }
         }
         this.board = board;
+    }
+    
+    public Board(Board b){
+        if(b == null){
+            throw new IllegalArgumentException("Board b can't be null.");
+        }
+        for (int i = 0; i < b.getVerSize(); i++) {
+            for (int j = 0; j < b.geHorSize(); j++) {
+                this.board[i][j] = b.getPiece(i, j);
+            }
+        }
     }
 
     public static int positionNumToIndex(int n) {

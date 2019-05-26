@@ -7,7 +7,6 @@ import pieces.Piece;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author glabka
@@ -20,19 +19,36 @@ public class MoveTracker {
     private int verTo;
     private int horTo;
     private Piece piece;
-    private Color pieceColor;
 
     // variables needed for Castle evaluation
     private boolean whiteKingMoved = false;
-    private boolean whiteKingsideRookMoved = false; 
+    private boolean whiteKingsideRookMoved = false;
     private boolean whiteQueensideRookMoved = false;
     private boolean blackKingMoved = false;
-    private boolean blackKingsideRookMoved = false; 
+    private boolean blackKingsideRookMoved = false;
     private boolean blackQueensideRookMoved = false;
+
+    public MoveTracker() {
+
+    }
+
+    public MoveTracker(MoveTracker mt) {
+        verFrom = mt.getVerFrom();
+        horFrom = mt.getHorFrom();
+        verTo = mt.getVerTo();
+        horTo = mt.getHorTo();
+        piece = mt.getPiece();
+
+        whiteKingMoved = mt.didKingMove(Color.WHITE);
+        whiteKingsideRookMoved = mt.didKingsideRookMove(Color.WHITE);
+        whiteQueensideRookMoved = mt.didQueensideRookMove(Color.WHITE);
+        blackKingMoved = mt.didKingMove(Color.BLACK);
+        blackKingsideRookMoved = mt.didKingsideRookMove(Color.BLACK);
+        blackQueensideRookMoved = mt.didQueensideRookMove(Color.BLACK);
+    }
 
     public void storeMove(Piece piece, int verFrom, int horFrom, int verTo, int horTo) {
         this.piece = piece;
-        this.pieceColor = pieceColor;
         this.verFrom = verFrom;
         this.horFrom = horFrom;
         this.verTo = verTo;

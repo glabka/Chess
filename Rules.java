@@ -20,20 +20,22 @@ import pieces.Queen;
  */
 public class Rules {
 
-    // TODO: check, check mate (adding states to game propably), transformation of
-    // pawn to something when reaching end, check if in condition of en passant there's
+    // TODO: check, check mate (adding states to game propably),
+    // pawn promotion, check if in condition of en passant there's
     // obligation that it is pawn
-    public static boolean move(Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
+    // If the move exposes check, it must be undone / disallowed.
+    // Stalemate is a situation in the game of chess where the player whose turn it is to move is not in check but has no legal move.
+    public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = Board.positionNumToIndex(iFrom);
         int horFrom = Board.positionCharToIndex(cFrom);
         int verTo = Board.positionNumToIndex(iTo);
         int horTo = Board.positionCharToIndex(cTo);
-        return move(p, b, mt, verFrom, horFrom, verTo, horTo);
+        return move(gs, p, b, mt, verFrom, horFrom, verTo, horTo);
     }
 
     // MoveTracker is used to rember moves necessary for castling and en passant
     // whereas MoveType is used to contain information about move in form of MovesEnum
-    public static boolean move(Player p, Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+    public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
         if (p == null) {
             throw new IllegalArgumentException("Player can't be null.");
         }
@@ -50,43 +52,50 @@ public class Rules {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
 
+        // TODO: isKingInCheck -> gs. inCheck
+        
         MoveType mType = new MoveType();
         if (isMoveLegal(p.getColor(), b, mt, mType, verFrom, horFrom, verTo, horTo)) {
-            Piece movingPiece = b.getPiece(verFrom, horFrom);
-
-            // Tracking whether King or rooks moved (important for castling)
-            if (movingPiece instanceof King) {
-                mt.storeKingMoved(movingPiece.getColor());
-            } else if (movingPiece instanceof Rook) {
-                if (horFrom == 0) {
-                    mt.storeQueensideRookMoved(movingPiece.getColor());
-                } else {
-                    mt.storeKingsideRookMoved(movingPiece.getColor());
-                }
-            }
-
-            mt.storeMove(movingPiece, verFrom, horFrom, verTo, horTo);
-            if (mType.getMoveType() == MovesEnum.STANDARD) {
-                b.movePiece(verFrom, horFrom, verTo, horTo);
-            } else if (mType.getMoveType() == MovesEnum.EN_PASSANT) {
-                b.movePiece(verFrom, horFrom, verTo, horTo);
-                b.deletePiece(verFrom, horTo);
-            } else if (mType.getMoveType() == MovesEnum.WHITE_KINGSIDE_CASTLING) {
-                b.movePiece(verFrom, horFrom, verTo, horTo); // moving king
-                b.movePiece(7, 7, 7, 5); // moving rook
-            } else if (mType.getMoveType() == MovesEnum.BLACK_KINGSIDE_CASTLING) {
-                b.movePiece(verFrom, horFrom, verTo, horTo); // moving king
-                b.movePiece(0, 7, 0, 5); // moving rook
-            } else if (mType.getMoveType() == MovesEnum.WHITE_QUEENSIDE_CASTLING) {
-                b.movePiece(verFrom, horFrom, verTo, horTo);
-                b.movePiece(7, 0, 7, 3); // moving rook
-            } else if (mType.getMoveType() == MovesEnum.BLACK_QUEENSIDE_CASTLING) {
-                b.movePiece(verFrom, horFrom, verTo, horTo);
-                b.movePiece(0, 0, 0, 3); // moving rook
-            }
+            movePiece(b, mt, mType, verFrom, horFrom, verTo, horTo);
             return true;
         } else {
             return false;
+        }
+    }
+
+    // moves piece on board without checking whether move is legal
+    private static void movePiece(Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
+        Piece movingPiece = b.getPiece(verFrom, horFrom);
+
+        // Tracking whether King or rooks moved (important for castling)
+        if (movingPiece instanceof King) {
+            mt.storeKingMoved(movingPiece.getColor());
+        } else if (movingPiece instanceof Rook) {
+            if (horFrom == 0) {
+                mt.storeQueensideRookMoved(movingPiece.getColor());
+            } else {
+                mt.storeKingsideRookMoved(movingPiece.getColor());
+            }
+        }
+
+        mt.storeMove(movingPiece, verFrom, horFrom, verTo, horTo);
+        if (mType.getMoveType() == MovesEnum.STANDARD) {
+            b.movePiece(verFrom, horFrom, verTo, horTo);
+        } else if (mType.getMoveType() == MovesEnum.EN_PASSANT) {
+            b.movePiece(verFrom, horFrom, verTo, horTo);
+            b.deletePiece(verFrom, horTo);
+        } else if (mType.getMoveType() == MovesEnum.WHITE_KINGSIDE_CASTLING) {
+            b.movePiece(verFrom, horFrom, verTo, horTo); // moving king
+            b.movePiece(7, 7, 7, 5); // moving rook
+        } else if (mType.getMoveType() == MovesEnum.BLACK_KINGSIDE_CASTLING) {
+            b.movePiece(verFrom, horFrom, verTo, horTo); // moving king
+            b.movePiece(0, 7, 0, 5); // moving rook
+        } else if (mType.getMoveType() == MovesEnum.WHITE_QUEENSIDE_CASTLING) {
+            b.movePiece(verFrom, horFrom, verTo, horTo);
+            b.movePiece(7, 0, 7, 3); // moving rook
+        } else if (mType.getMoveType() == MovesEnum.BLACK_QUEENSIDE_CASTLING) {
+            b.movePiece(verFrom, horFrom, verTo, horTo);
+            b.movePiece(0, 0, 0, 3); // moving rook
         }
     }
 
@@ -97,28 +106,57 @@ public class Rules {
             return false;
         }
 
+        // checking if king will be in check after the move is done
+        MovesEnum oldMoveType = mType.getMoveType(); // if moves unveils check, than the move have to be reversed and mType has to be restored
+        if (isMoveLegalNotConsideringCheck(movingPiece, b, mt, mType, verFrom, horFrom, verTo, horTo)) {
+            Board testB = new Board(b);
+            MoveTracker testMT = new MoveTracker(mt);
+            MoveType testMType = new MoveType(mType);
+            movePiece(testB, testMT, testMType,verFrom, horFrom, verTo, horTo);
+            if (isKingInCheck(testB, playersColor, testMT)) {
+                System.out.println("King would be in check."); // debug
+                mType.setMoveType(oldMoveType);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+
+    }
+
+    private static boolean isMoveLegalNotConsideringCheck(Piece movingPiece, Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
         if (movingPiece instanceof King) {
             return isKingsMoveLegal(b, mt, mType, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Queen) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isQueensMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
+            return isQueensMoveLegal(b, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Bishop) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isBishopsMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
+            return isBishopsMoveLegal(b, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Knight) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isKnightsMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
+            return isKnightsMoveLegal(b, verFrom, horFrom, verTo, horTo);
         } else if (movingPiece instanceof Rook) {
             mType.setMoveType(MovesEnum.STANDARD);
-            return isRooksMoveLegal(b, mt, verFrom, horFrom, verTo, horTo);
+            return isRooksMoveLegal(b, verFrom, horFrom, verTo, horTo);
         } else { // pawn
             return isPawnsMoveLegal(b, mt, mType, verFrom, horFrom, verTo, horTo);
         }
-
     }
-    
-    private static boolean isKingInCheck(){
-        
+
+    private static boolean isKingInCheck(Board b, Color kingsColor, MoveTracker mt) {
+        int kingVer = 0, kingHor = 0;
+        for (int i = 0; i < b.getVerSize(); i++) {
+            for (int j = 0; j < b.geHorSize(); j++) {
+                if (b.getPiece(i, j) instanceof King && b.getPiece(i, j).getColor() == kingsColor) {
+                    kingVer = i;
+                    kingHor = j;
+                }
+            }
+        }
+        return isPositionInCheck(b, kingsColor, mt, kingVer, kingHor);
     }
 
     private static boolean basicLegalityCheck(Color playersColor, Board b, int verFrom, int horFrom, int verTo, int horTo) {
@@ -197,7 +235,7 @@ public class Rules {
         return false;
     }
 
-    private static boolean isQueensMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isQueensMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
             return false;
@@ -212,7 +250,7 @@ public class Rules {
         }
     }
 
-    private static boolean isBishopsMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isBishopsMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
             return false;
@@ -223,7 +261,7 @@ public class Rules {
         }
     }
 
-    private static boolean isKnightsMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isKnightsMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
             return false;
@@ -236,7 +274,7 @@ public class Rules {
         }
     }
 
-    private static boolean isRooksMoveLegal(Board b, MoveTracker mt, int verFrom, int horFrom, int verTo, int horTo) {
+    private static boolean isRooksMoveLegal(Board b, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
         if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
             return false;
@@ -325,7 +363,7 @@ public class Rules {
                         && (verFrom == ver || verFrom + 1 == ver || verFrom - 1 == ver)
                         && (horFrom == hor || horFrom + 1 == hor || horFrom - 1 == hor)) {
                     return true;
-                } else if (!(attackingPiece instanceof King) && isMoveLegal(attackingPiece.getColor(), b, mt, new MoveType(), verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
+                } else if (!(attackingPiece instanceof King) && isMoveLegalNotConsideringCheck(attackingPiece, b, mt, new MoveType(), verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
 //                    System.out.println("verFrom = " + verFrom + ", horFrom = " + horFrom); // debug
                     System.out.println("Position " + ver + ", " + hor + " is checked."); // debug
                     return true;

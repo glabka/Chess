@@ -20,6 +20,10 @@ public class MoveType {
         this.mt = mt;
     }
     
+    public MoveType(MoveType mType){
+        this.mt = mType.getMoveType();
+    }
+    
     public void setMoveType(MovesEnum mt){
         this.mt = mt;
     }

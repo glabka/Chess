@@ -42,18 +42,19 @@ public class Main {
 //
 //
 //
-        if (true) {
+        if (false) {
 //        // Testing of moves - user input        
             Board b = new Board();
             Player p1 = new Player(Color.WHITE);
             Player p2 = new Player(Color.BLACK);
             Player currentPlayer = p1;
             MoveTracker mt = new MoveTracker();
+            GameState gs = new GameState();
             int[] positions = new int[4];
             while (true) {
                 b.printBoard();
                 Input.read4Int(positions);
-                if (Rules.move(currentPlayer, b, mt, positions[0], positions[1], positions[2], positions[3])) {
+                if (Rules.move(gs, currentPlayer, b, mt, positions[0], positions[1], positions[2], positions[3])) {
                     if (currentPlayer == p1) {
                         currentPlayer = p2;
                     } else {
@@ -76,6 +77,11 @@ public class Main {
             {7, 4, 6, 4},
             {0, 3, 3, 6},
             {6, 4, 5, 4}};
+            Integer[][] revealingKingIntoCheck = {{6, 7, 5, 7},
+            {1, 4, 2, 4},
+            {5, 7, 4, 7},
+            {0, 5, 4, 1},
+            {6, 3, 5, 3}};
             Integer[][] twoEnPassants = {{6, 7, 4, 7},
             {1, 0, 3, 0},
             {4, 7, 3, 7},
@@ -99,12 +105,13 @@ public class Main {
             Player p2 = new Player(Color.BLACK);
             Player currentPlayer = p1;
             MoveTracker mt = new MoveTracker();
+            GameState gs = new GameState();
 
             Integer[][] positions = whiteKingsideCastling;
             for (int i = 0; i < positions.length; i++) {
                 b.printBoard();
                 System.out.println(positions[i][0] + " " + positions[i][1] + " " + positions[i][2] + " " + positions[i][3]);
-                if (Rules.move(currentPlayer, b, mt, positions[i][0], positions[i][1], positions[i][2], positions[i][3])) {
+                if (Rules.move(gs, currentPlayer, b, mt, positions[i][0], positions[i][1], positions[i][2], positions[i][3])) {
                     if (currentPlayer == p1) {
                         currentPlayer = p2;
                     } else {
