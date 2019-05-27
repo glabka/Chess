@@ -20,11 +20,10 @@ import pieces.Queen;
  */
 public class Rules {
 
-    // TODO: check, check mate (adding states to game propably),
-    // pawn promotion, check if in condition of en passant there's
-    // obligation that it is pawn
-    // If the move exposes check, it must be undone / disallowed.
-    // Stalemate is a situation in the game of chess where the player whose turn it is to move is not in check but has no legal move.
+    // TODO: 
+    // * check (adding states to game propably)
+    // * pawn promotion
+    
     public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = Board.positionNumToIndex(iFrom);
         int horFrom = Board.positionCharToIndex(cFrom);
@@ -52,14 +51,32 @@ public class Rules {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
 
-        // TODO: isKingInCheck -> gs. inCheck
-        
+        checkGameState(p.getColor(), b, mt, gs);
+        if (gs.getState() == GameStateEnum.STALEMATE
+                || gs.getState() == GameStateEnum.BLACK_KING_CHECKMATED || gs.getState() == GameStateEnum.WHITE_KING_CHECKMATED) {
+            return false;
+        }
+
         MoveType mType = new MoveType();
         if (isMoveLegal(p.getColor(), b, mt, mType, verFrom, horFrom, verTo, horTo)) {
             movePiece(b, mt, mType, verFrom, horFrom, verTo, horTo);
+            checkGameState(p.getColor(), b, mt, gs);
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static void checkGameState(Color playersColor, Board b, MoveTracker mt, GameState gs) {
+        // TODO: isKingInCheck -> gs. inCheck
+        if (isKingInStalemate(playersColor, b, mt)) {
+            gs.setState(GameStateEnum.STALEMATE);
+        } else if (isKingCheckmated(playersColor, b, mt)) {
+            if (playersColor == Color.WHITE) {
+                gs.setState(GameStateEnum.WHITE_KING_CHECKMATED);
+            } else {
+                gs.setState(GameStateEnum.BLACK_KING_CHECKMATED);
+            }
         }
     }
 
@@ -112,7 +129,7 @@ public class Rules {
             Board testB = new Board(b);
             MoveTracker testMT = new MoveTracker(mt);
             MoveType testMType = new MoveType(mType);
-            movePiece(testB, testMT, testMType,verFrom, horFrom, verTo, horTo);
+            movePiece(testB, testMT, testMType, verFrom, horFrom, verTo, horTo);
             if (isKingInCheck(testB, playersColor, testMT)) {
                 System.out.println("King would be in check."); // debug
                 mType.setMoveType(oldMoveType);
@@ -149,7 +166,7 @@ public class Rules {
     private static boolean isKingInCheck(Board b, Color kingsColor, MoveTracker mt) {
         int kingVer = 0, kingHor = 0;
         for (int i = 0; i < b.getVerSize(); i++) {
-            for (int j = 0; j < b.geHorSize(); j++) {
+            for (int j = 0; j < b.getHorSize(); j++) {
                 if (b.getPiece(i, j) instanceof King && b.getPiece(i, j).getColor() == kingsColor) {
                     kingVer = i;
                     kingHor = j;
@@ -352,7 +369,7 @@ public class Rules {
     // MovesContainer wouldn't be necessary if it weren't requiered by isMoveLegal method
     private static boolean isPositionInCheck(Board b, Color kingsColor, MoveTracker mt, int ver, int hor) {
         for (int verFrom = 0; verFrom < b.getVerSize(); verFrom++) {
-            for (int horFrom = 0; horFrom < b.geHorSize(); horFrom++) {
+            for (int horFrom = 0; horFrom < b.getHorSize(); horFrom++) {
                 Piece attackingPiece = b.getPiece(verFrom, horFrom);
                 if (attackingPiece == null || attackingPiece.getColor() == kingsColor) {
                     continue;
@@ -371,6 +388,50 @@ public class Rules {
             }
         }
 
+        return false;
+    }
+
+    public static boolean isKingCheckmated(Color playersColor, Board b, MoveTracker mt) {
+        if (isKingInCheck(b, playersColor, mt)) {
+            if (canLegalMoveBeDone(playersColor, b, mt)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean isKingInStalemate(Color playersColor, Board b, MoveTracker mt) {
+        if (isKingInCheck(b, playersColor, mt)) {
+            return false;
+        } else {
+            if (canLegalMoveBeDone(playersColor, b, mt)) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    private static boolean canLegalMoveBeDone(Color playersColor, Board b, MoveTracker mt) {
+        Piece movingPiece = null;
+        for (int i = 0; i < b.getVerSize(); i++) {
+            for (int j = 0; j < b.getHorSize(); j++) {
+                movingPiece = b.getPiece(i, j);
+                if (movingPiece != null && movingPiece.getColor() == playersColor) {
+                    // finding out if there's coordinates where to do legal move
+                    for (int k = 0; k < b.getVerSize(); k++) {
+                        for (int l = 0; l < b.getHorSize(); l++) {
+                            if (isMoveLegal(playersColor, b, mt, new MoveType(), i, j, k, l)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 

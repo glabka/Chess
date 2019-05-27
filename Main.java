@@ -1,6 +1,11 @@
 
 import pieces.Color;
 import java.util.LinkedList;
+import pieces.King;
+import pieces.Pawn;
+import pieces.Piece;
+import pieces.Queen;
+import pieces.Rook;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -42,12 +47,58 @@ public class Main {
 //
 //
 //
-        if (false) {
-//        // Testing of moves - user input        
-            Board b = new Board();
+        // for all cases below it is black players turn
+        Piece[][] stalemate1 = new Piece[8][8];
+        stalemate1[0][7] = new King(Color.BLACK);
+        stalemate1[1][5] = new King(Color.WHITE);
+        stalemate1[2][6] = new Queen(Color.WHITE);
+
+        Piece[][] stalemate2 = new Piece[8][8];
+        stalemate2[0][5] = new King(Color.BLACK);
+        stalemate2[1][5] = new Pawn(Color.WHITE);
+        stalemate2[2][5] = new King(Color.WHITE);
+
+        Piece[][] checkmate1 = new Piece[8][8];
+        checkmate1[2][5] = new King(Color.WHITE);
+        checkmate1[2][7] = new King(Color.BLACK);
+        checkmate1[7][7] = new Rook(Color.WHITE);
+
+        Piece[][] checkmate2 = new Piece[8][8];
+        checkmate2[2][0] = new King(Color.BLACK);
+        checkmate2[2][1] = new Queen(Color.WHITE);
+        checkmate2[3][2] = new King(Color.WHITE);
+
+        Piece[][] checkmate3 = new Piece[8][8];
+        checkmate3[3][7] = new Queen(Color.WHITE);
+        checkmate3[5][7] = new King(Color.BLACK);
+        checkmate3[6][5] = new King(Color.WHITE);
+
+        Piece[][] checkmate4 = new Piece[8][8];
+        checkmate4[2][5] = new King(Color.WHITE);
+        checkmate4[2][7] = new King(Color.BLACK);
+        checkmate4[7][7] = new Queen(Color.WHITE);
+
+        Piece[][] notACheckmate1 = new Piece[8][8];
+        notACheckmate1[2][0] = new King(Color.BLACK);
+        notACheckmate1[2][1] = new Queen(Color.WHITE);
+        notACheckmate1[4][2] = new King(Color.WHITE);
+
+        // one step from checkmate
+        Piece[][] oneStepFromCheckmate1 = new Piece[8][8];
+        oneStepFromCheckmate1[2][5] = new King(Color.WHITE);
+        oneStepFromCheckmate1[2][7] = new King(Color.BLACK);
+        oneStepFromCheckmate1[7][7] = new Queen(Color.WHITE);
+        oneStepFromCheckmate1[4][0] = new Rook(Color.BLACK);
+
+        // for all cases below it is white players move
+//        Piece[][] checkmate5 = new Piece[8][8];
+//        checkmate5[]
+        if (true) {
+//        // Testing of moves - user input    
+            Board b = new Board(oneStepFromCheckmate1);
             Player p1 = new Player(Color.WHITE);
             Player p2 = new Player(Color.BLACK);
-            Player currentPlayer = p1;
+            Player currentPlayer = p2; // BE AWARE
             MoveTracker mt = new MoveTracker();
             GameState gs = new GameState();
             int[] positions = new int[4];
@@ -61,6 +112,9 @@ public class Main {
                         currentPlayer = p1;
                     }
                 } else {
+                    if (gs.getState() != GameStateEnum.NORMAL) {
+                        System.out.println(gs.getState());
+                    }
                     System.out.println("The move is not possible.");
                 }
 

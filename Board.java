@@ -64,7 +64,7 @@ public class Board {
             throw new IllegalArgumentException("Board b can't be null.");
         }
         for (int i = 0; i < b.getVerSize(); i++) {
-            for (int j = 0; j < b.geHorSize(); j++) {
+            for (int j = 0; j < b.getHorSize(); j++) {
                 this.board[i][j] = b.getPiece(i, j);
             }
         }
@@ -160,6 +160,7 @@ public class Board {
         board[verFrom][horFrom] = null;
     }
     
+    // needed for en passant
     public void deletePiece(int ver, int hor){
         checkPosition(ver, hor);
         
@@ -196,37 +197,6 @@ public class Board {
         return board[ver][hor];
     }
 
-//    public PieceEnum getPieceType(int ver, int hor){
-//        if(!isIndexOnBoard(ver)){
-//            throw new IllegalArgumentException("position ver = " + ver + " is out of bounds.");
-//        } else if(!isIndexOnBoard(hor)){
-//            throw new IllegalArgumentException("position hor = " + hor + " is out of bounds.");
-//        }
-//        
-//        if(board[ver][hor] == null){
-//            return null;
-//        } else if(board[ver][hor] instanceof King){
-//            return PieceEnum.KING;
-//        } else if(board[ver][hor] instanceof Queen){
-//            return PieceEnum.QUEEN;
-//        } else if(board[ver][hor] instanceof Bishop){
-//            return PieceEnum.BISHOP;
-//        } else if(board[ver][hor] instanceof Knight){
-//            return PieceEnum.KNIGHT;
-//        } else if(board[ver][hor] instanceof Rook){
-//            return PieceEnum.ROOK;
-//        } else { // Pawn
-//            return PieceEnum.PAWN;
-//        }
-//    }
-//    
-//    public Color getPieceColor(int ver, int hor){
-//        if(board[ver][hor] == null){
-//            return null;
-//        } else{
-//            return board[ver][hor].getColor();
-//        }
-//    }
     public static boolean isIndexOnBoard(int index) {
         if (index >= 0 || index < 8) {
             return true;
@@ -239,7 +209,7 @@ public class Board {
         return board.length;
     }
 
-    public int geHorSize() {
+    public int getHorSize() {
         return board[0].length;
     }
 
