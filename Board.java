@@ -13,7 +13,6 @@ import pieces.Knight;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author glabka
@@ -58,9 +57,9 @@ public class Board {
         }
         this.board = board;
     }
-    
-    public Board(Board b){
-        if(b == null){
+
+    public Board(Board b) {
+        if (b == null) {
             throw new IllegalArgumentException("Board b can't be null.");
         }
         for (int i = 0; i < b.getVerSize(); i++) {
@@ -150,30 +149,63 @@ public class Board {
 
     public void movePiece(int verFrom, int horFrom, int verTo, int horTo) {
         checkPosition(verFrom, horFrom, verTo, horTo);
-        
+
         Piece piece = board[verFrom][horFrom];
-        if(piece == null){
+        if (piece == null) {
             throw new NoPieceAtGivenPositionException("No piece at position " + verFrom + ", " + horFrom + ".");
         }
-        
+
         board[verTo][horTo] = piece;
         board[verFrom][horFrom] = null;
     }
-    
+
     // needed for en passant
-    public void deletePiece(int ver, int hor){
+    public void deletePiece(int ver, int hor) {
         checkPosition(ver, hor);
-        
+
         Piece piece = board[ver][hor];
-        if(piece == null){
+        if (piece == null) {
             throw new NoPieceAtGivenPositionException("No piece at position " + ver + ", " + hor + ".");
         }
-        
-        board[ver][hor] = null;        
+
+        board[ver][hor] = null;
     }
-    
+
+    public void promotePawn(int ver, int hor) {
+        checkPosition(ver, hor);
+        Piece piece = board[ver][hor];
+        if (!(piece instanceof Pawn)) {
+            throw new NoPawnAtGivenPositionException("No pawn at position " + ver + ", " + hor + ".");
+        }
+        
+        Piece newPiece = null;
+        while (true) {
+            System.out.println("Enter q for queen, k for knight, b for bishop or r for rook.");
+            char ch = Input.readChar();
+            String input = String.valueOf(ch);
+            switch (input.toLowerCase()) {
+                case "k":
+                    newPiece = new Knight(piece.getColor());
+                    break;
+                case "b":
+                    newPiece = new Bishop(piece.getColor());
+                    break;
+                case "r":
+                    newPiece = new Rook(piece.getColor());
+                    break;
+                case "q":
+                    newPiece = new Queen(piece.getColor());
+                    break;
+            }
+            if (newPiece != null) {
+                break;
+            }
+        }
+        board[ver][hor] = newPiece;
+    }
+
     // throws exception if position is out of bounds
-    private void checkPosition(int verFrom, int horFrom, int verTo, int horTo){
+    private void checkPosition(int verFrom, int horFrom, int verTo, int horTo) {
         if (!Board.isIndexOnBoard(verFrom)) {
             throw new IllegalArgumentException("position verFrom = " + verFrom + " is out of bounds.");
         } else if (!Board.isIndexOnBoard(horFrom)) {
@@ -184,15 +216,15 @@ public class Board {
             throw new IllegalArgumentException("position horTo = " + horTo + " is out of bounds.");
         }
     }
-    
-    private void checkPosition(int ver, int hor){
+
+    private void checkPosition(int ver, int hor) {
         if (!Board.isIndexOnBoard(ver)) {
             throw new IllegalArgumentException("position verFrom = " + ver + " is out of bounds.");
         } else if (!Board.isIndexOnBoard(hor)) {
             throw new IllegalArgumentException("position horFrom = " + hor + " is out of bounds.");
         }
     }
-    
+
     public Piece getPiece(int ver, int hor) {
         return board[ver][hor];
     }

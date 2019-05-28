@@ -25,6 +25,21 @@ public class Input {
 //            }
 //        }
 //    }
+    public static char readChar() {
+        Scanner in = new Scanner(System.in);
+        char ch;
+        while (true) {
+            if (in.hasNext()) {
+                ch = in.next().charAt(0);
+                in.nextLine();
+                return ch;
+            } else {
+                System.out.println("There's been problem with input, please enter correct character.");
+                in.nextLine();
+            }
+        }
+    }
+
     public static void read4Int(int[] output) {
         if (output == null || output.length != 4) {
             throw new IllegalArgumentException("output can't be null and have to refer to array of length 4.");

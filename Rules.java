@@ -22,8 +22,7 @@ public class Rules {
 
     // TODO: 
     // * check (adding states to game propably)
-    // * pawn promotion
-    
+    // * pawn promotion - problem -> b.promotePawn is activated through checking if kings in check or something like that
     public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = Board.positionNumToIndex(iFrom);
         int horFrom = Board.positionCharToIndex(cFrom);
@@ -59,7 +58,7 @@ public class Rules {
 
         MoveType mType = new MoveType();
         if (isMoveLegal(p.getColor(), b, mt, mType, verFrom, horFrom, verTo, horTo)) {
-            movePiece(b, mt, mType, verFrom, horFrom, verTo, horTo);
+            movePiece(false, b, mt, mType, verFrom, horFrom, verTo, horTo);
             checkGameState(p.getColor(), b, mt, gs);
             return true;
         } else {
@@ -81,23 +80,23 @@ public class Rules {
     }
 
     // moves piece on board without checking whether move is legal
-    private static void movePiece(Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
+    // calledfromWithin - true if function is called within class Rules, false if called by external class
+    // calledFromWithin is important in case pawn would be promoted - that should happened only when external
+    // call is done
+    private static void movePiece(boolean calledFromWithin, Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
         Piece movingPiece = b.getPiece(verFrom, horFrom);
 
         // Tracking whether King or rooks moved (important for castling)
-        if (movingPiece instanceof King) {
-            mt.storeKingMoved(movingPiece.getColor());
-        } else if (movingPiece instanceof Rook) {
-            if (horFrom == 0) {
-                mt.storeQueensideRookMoved(movingPiece.getColor());
-            } else {
-                mt.storeKingsideRookMoved(movingPiece.getColor());
-            }
-        }
+        storeKingsOrRooksMove(movingPiece, mt, horFrom);
 
         mt.storeMove(movingPiece, verFrom, horFrom, verTo, horTo);
         if (mType.getMoveType() == MovesEnum.STANDARD) {
             b.movePiece(verFrom, horFrom, verTo, horTo);
+        } else if (mType.getMoveType() == MovesEnum.PAWN_PROMOTION) {
+            b.movePiece(verFrom, horFrom, verTo, horTo);
+            if (!calledFromWithin) {
+                b.promotePawn(verTo, horTo);
+            }
         } else if (mType.getMoveType() == MovesEnum.EN_PASSANT) {
             b.movePiece(verFrom, horFrom, verTo, horTo);
             b.deletePiece(verFrom, horTo);
@@ -116,6 +115,18 @@ public class Rules {
         }
     }
 
+    private static void storeKingsOrRooksMove(Piece piece, MoveTracker mt, int horFrom) {
+        if (piece instanceof King) {
+            mt.storeKingMoved(piece.getColor());
+        } else if (piece instanceof Rook) {
+            if (horFrom == 0) {
+                mt.storeQueensideRookMoved(piece.getColor());
+            } else {
+                mt.storeKingsideRookMoved(piece.getColor());
+            }
+        }
+    }
+
     public static boolean isMoveLegal(Color playersColor, Board b, MoveTracker mt, MoveType mType, int verFrom, int horFrom, int verTo, int horTo) {
         // Piece can be null if there's no piece on the location
         Piece movingPiece = b.getPiece(verFrom, horFrom);
@@ -129,7 +140,7 @@ public class Rules {
             Board testB = new Board(b);
             MoveTracker testMT = new MoveTracker(mt);
             MoveType testMType = new MoveType(mType);
-            movePiece(testB, testMT, testMType, verFrom, horFrom, verTo, horTo);
+            movePiece(true, testB, testMT, testMType, verFrom, horFrom, verTo, horTo);
             if (isKingInCheck(testB, playersColor, testMT)) {
                 System.out.println("King would be in check."); // debug
                 mType.setMoveType(oldMoveType);
@@ -325,12 +336,20 @@ public class Rules {
                 return true;
             } // moving forward
             else if (verFrom + 1 == verTo && horFrom == horTo && standingPiece == null) {
-                mType.setMoveType(MovesEnum.STANDARD);
+                if (verTo == 7) {
+                    mType.setMoveType(MovesEnum.PAWN_PROMOTION);
+                } else {
+                    mType.setMoveType(MovesEnum.STANDARD);
+                }
                 return true;
             } // normal capture
             else if (verFrom + 1 == verTo && (horFrom + 1 == horTo || horFrom - 1 == horTo)
                     && standingPiece != null && standingPiece.getColor() != movingPiece.getColor()) {
-                mType.setMoveType(MovesEnum.STANDARD);
+                if (verTo == 7) {
+                    mType.setMoveType(MovesEnum.PAWN_PROMOTION);
+                } else {
+                    mType.setMoveType(MovesEnum.STANDARD);
+                }
                 return true;
             } else if (verFrom == 4
                     && mt.getPiece() instanceof Pawn && mt.getVerFrom() == 6 && mt.getVerTo() == 4 // last move of Pawn was double step
@@ -347,12 +366,20 @@ public class Rules {
                 return true;
             } // moving forward
             else if (verFrom - 1 == verTo && horFrom == horTo && standingPiece == null) {
-                mType.setMoveType(MovesEnum.STANDARD);
+                if (verTo == 0) {
+                    mType.setMoveType(MovesEnum.PAWN_PROMOTION);
+                } else {
+                    mType.setMoveType(MovesEnum.STANDARD);
+                }
                 return true;
             } // normal capture
             else if (verFrom - 1 == verTo && (horFrom + 1 == horTo || horFrom - 1 == horTo)
                     && standingPiece != null && standingPiece.getColor() != movingPiece.getColor()) {
-                mType.setMoveType(MovesEnum.STANDARD);
+                if (verTo == 0) {
+                    mType.setMoveType(MovesEnum.PAWN_PROMOTION);
+                } else {
+                    mType.setMoveType(MovesEnum.STANDARD);
+                }
                 return true;
             } else if (verFrom == 3
                     && mt.getPiece() instanceof Pawn && mt.getVerFrom() == 1 && mt.getVerTo() == 3 // last move of Pawn was double step

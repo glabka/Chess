@@ -1,7 +1,9 @@
 
 import pieces.Color;
 import java.util.LinkedList;
+import pieces.Bishop;
 import pieces.King;
+import pieces.Knight;
 import pieces.Pawn;
 import pieces.Piece;
 import pieces.Queen;
@@ -91,14 +93,32 @@ public class Main {
         oneStepFromCheckmate1[4][0] = new Rook(Color.BLACK);
 
         // for all cases below it is white players move
-//        Piece[][] checkmate5 = new Piece[8][8];
-//        checkmate5[]
+        Piece[][] checkmate5 = new Piece[8][8];
+        checkmate5[0][1] = new Queen(Color.WHITE);
+        checkmate5[1][5] = new Pawn(Color.BLACK);
+        checkmate5[1][6] = new King(Color.BLACK);
+        checkmate5[2][2] = new Pawn(Color.BLACK);
+        checkmate5[2][6] = new Pawn(Color.BLACK);
+        checkmate5[3][1] = new Pawn(Color.BLACK);
+        checkmate5[3][4] = new Knight(Color.WHITE);
+        checkmate5[3][7] = new Pawn(Color.BLACK);
+        checkmate5[4][1] = new Bishop(Color.BLACK);
+        checkmate5[4][7] = new Pawn(Color.WHITE);
+        checkmate5[5][1] = new Bishop(Color.BLACK);
+        checkmate5[5][2] = new Knight(Color.BLACK);
+        checkmate5[6][2] = new Rook(Color.BLACK);
+        checkmate5[6][6] = new Pawn(Color.WHITE);
+        checkmate5[7][2] = new King(Color.WHITE);
+        
+        Piece[][] pawnPromotion = new Piece[8][8];
+        pawnPromotion[1][0] = new Pawn(Color.WHITE);
+        pawnPromotion[6][0] = new Pawn(Color.BLACK);
         if (true) {
 //        // Testing of moves - user input    
-            Board b = new Board(oneStepFromCheckmate1);
+            Board b = new Board(pawnPromotion);
             Player p1 = new Player(Color.WHITE);
             Player p2 = new Player(Color.BLACK);
-            Player currentPlayer = p2; // BE AWARE
+            Player currentPlayer = p1; // BE AWARE
             MoveTracker mt = new MoveTracker();
             GameState gs = new GameState();
             int[] positions = new int[4];
