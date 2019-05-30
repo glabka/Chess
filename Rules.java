@@ -22,7 +22,6 @@ public class Rules {
 
     // TODO: 
     // * check (adding states to game propably)
-    // * pawn promotion - problem -> b.promotePawn is activated through checking if kings in check or something like that
     public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, int iFrom, char cFrom, int iTo, char cTo) {
         int verFrom = Board.positionNumToIndex(iFrom);
         int horFrom = Board.positionCharToIndex(cFrom);
@@ -133,6 +132,11 @@ public class Rules {
         if (movingPiece == null) {
             return false;
         }
+        
+        if(playersColor != movingPiece.getColor()){
+            System.out.println("It is " + playersColor + " players move.");
+            return false;
+        }
 
         // checking if king will be in check after the move is done
         MovesEnum oldMoveType = mType.getMoveType(); // if moves unveils check, than the move have to be reversed and mType has to be restored
@@ -142,7 +146,7 @@ public class Rules {
             MoveType testMType = new MoveType(mType);
             movePiece(true, testB, testMT, testMType, verFrom, horFrom, verTo, horTo);
             if (isKingInCheck(testB, playersColor, testMT)) {
-                System.out.println("King would be in check."); // debug
+//                System.out.println("King would be in check."); // debug
                 mType.setMoveType(oldMoveType);
                 return false;
             } else {
@@ -320,11 +324,6 @@ public class Rules {
         // Piece can be null if there's no piece on the location
         Piece standingPiece = b.getPiece(verTo, horTo);
 
-        // debug
-//        System.out.println(mt.getPiece() instanceof Pawn);
-//        System.out.println("mt verFrom = " + mt.getVerFrom());
-//        System.out.println("mt verTo = " + mt.getVerTo());
-        // end of debug
         if (!basicLegalityCheck(movingPiece.getColor(), b, verFrom, horFrom, verTo, horTo)) {
             return false;
         }
@@ -409,7 +408,7 @@ public class Rules {
                     return true;
                 } else if (!(attackingPiece instanceof King) && isMoveLegalNotConsideringCheck(attackingPiece, b, mt, new MoveType(), verFrom, horFrom, ver, hor)) { // if attacking piece can move from it's posistion verFrom, horFrom to position we are checking i.e. ver, hor
 //                    System.out.println("verFrom = " + verFrom + ", horFrom = " + horFrom); // debug
-                    System.out.println("Position " + ver + ", " + hor + " is checked."); // debug
+//                    System.out.println("Position " + ver + ", " + hor + " is checked."); // debug
                     return true;
                 }
             }
@@ -514,7 +513,6 @@ public class Rules {
         }
 
         for (int i = 0; i < numOfPositionBetween; i++) {
-//            System.out.print((verDown + i + 1) + "," + horDown + "; "); // debug
             if (b.getPiece(verDown + i + 1, horDown) != null) {
                 return false;
             }
@@ -546,7 +544,6 @@ public class Rules {
         }
 
         for (int i = 0; i < numOfPositionsBetween; i++) {
-//            System.out.print((verLeft + i * d + d) + "," + (horLeft + i + 1) + "; "); // debug
             if (b.getPiece(verLeft + i * d + d, horLeft + i + 1) != null) {
                 return false;
             }
