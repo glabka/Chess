@@ -101,14 +101,14 @@ public class Board {
     public void printBoard() {
         System.out.print(" ");
         for (int i = 0; i < board.length; i++) {
-//            System.out.print("╳" + indexToPositionChar(i));
-            System.out.print("╳" + i);// debug
+            System.out.print("╳" + indexToPositionChar(i));
+//            System.out.print("╳" + i);// debug
         }
         System.out.println("");
 
         for (int i = 0; i < board.length; i++) {
-//            System.out.print(indexToPositionNum(i));
-            System.out.print(i); // debug
+            System.out.print(indexToPositionNum(i));
+//            System.out.print(i); // debug
             for (int j = 0; j < board[i].length; j++) {
                 System.out.print(" ");
                 if (board[i][j] == null) {

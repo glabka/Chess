@@ -25,6 +25,7 @@ public class Main {
      */
     public static void main(String[] args) {
         // https://codereview.stackexchange.com/questions/71790/design-a-chess-game-using-object-oriented-principles
+//        https://www.quora.com/What-are-some-good-project-ideas-for-an-undergraduate-object-oriented-programming-course-using-Java
 
 //            Board b = new Board();
 //            System.out.println(Board.positionNumToIndex(5));
@@ -109,11 +110,11 @@ public class Main {
         checkmate5[6][2] = new Rook(Color.BLACK);
         checkmate5[6][6] = new Pawn(Color.WHITE);
         checkmate5[7][2] = new King(Color.WHITE);
-        
+
         Piece[][] pawnPromotion = new Piece[8][8];
         pawnPromotion[1][0] = new Pawn(Color.WHITE);
         pawnPromotion[6][0] = new Pawn(Color.BLACK);
-        if (true) {
+        if (false) {
 //        // Testing of moves - user input    
             Board b = new Board(pawnPromotion);
             Player p1 = new Player(Color.WHITE);
@@ -143,7 +144,7 @@ public class Main {
             //
             //
             //
-        } else {
+        } else if (false) {
             // Testing of moves - input in code
             // moves
             Integer[][] posInCheck = {{6, 4, 4, 4},
@@ -196,6 +197,9 @@ public class Main {
                 }
             }
             b.printBoard();
+        } else {
+            Game g = new Game();
+            g.startGame();
         }
 
     }

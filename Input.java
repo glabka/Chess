@@ -40,6 +40,35 @@ public class Input {
         }
     }
 
+    public static void readCoordinates(int[] output) {
+        if (output == null || output.length != 4) {
+            throw new IllegalArgumentException("output can't be null and have to refer to array of length 4.");
+        }
+        Scanner in = new Scanner(System.in);
+        while (true) {
+            String input;
+            if (in.hasNext() && (input = in.next()).length() == 4) {
+                for (int i = 0; i < 4; i++) {
+                    char ch = input.charAt(i);
+                    if ((i + 1) % 2 == 0) {
+                        // chars
+                        output[i] = Board.positionCharToIndex(ch);
+                    } else {
+                        // ints
+                        output[i] = Board.positionNumToIndex(Integer.valueOf(String.valueOf(ch)));
+                    }
+                    if (i == 3) {
+                        in.nextLine();
+                        return;
+                    }
+                }
+            } else {
+                System.out.println("There's been problem with entered input, please enter coordinates for example 1b3a.");
+                in.nextLine();
+            }
+        }
+    }
+
     public static void read4Int(int[] output) {
         if (output == null || output.length != 4) {
             throw new IllegalArgumentException("output can't be null and have to refer to array of length 4.");
