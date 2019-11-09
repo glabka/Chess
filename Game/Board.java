@@ -69,6 +69,10 @@ public class Board {
             }
         }
     }
+    
+    public Board cloneBoard() {
+    	return new Board(this);
+    }
 
     public static int positionNumToIndex(int n) {
         if (n < 1 || n > 8) {
@@ -100,10 +104,12 @@ public class Board {
     }
 
     public void printBoard() {
+    	String fillingChar1 = "*"; // "╳", "◯"
+    	String fillingChar2 = ".";
         System.out.print(" ");
         for (int i = 0; i < board.length; i++) {
-            System.out.print("â•³" + indexToPositionChar(i));
-//            System.out.print("â•³" + i);// debug
+            System.out.print(fillingChar1 + indexToPositionChar(i));
+//            System.out.print("╳" + i);// debug
         }
         System.out.println("");
 
@@ -114,34 +120,34 @@ public class Board {
                 System.out.print(" ");
                 if (board[i][j] == null) {
                     if (((i + 1) % 2 == 0 && (j + 1) % 2 == 0) || ((i + 1) % 2 != 0 && (j + 1) % 2 != 0)) {
-                        System.out.print("â•³");
+                        System.out.print(fillingChar1);
                     } else {
-                        System.out.print("â—¯");
+                        System.out.print(fillingChar2);
                     }
                 } else if (board[i][j] instanceof King && board[i][j].getColor() == Color.BLACK) {
-                    System.out.print("â™š");
+                    System.out.print("♚");
                 } else if (board[i][j] instanceof King && board[i][j].getColor() == Color.WHITE) {
-                    System.out.print("â™”");
+                    System.out.print("♔");
                 } else if (board[i][j] instanceof Queen && board[i][j].getColor() == Color.BLACK) {
-                    System.out.print("â™›");
+                    System.out.print("♛");
                 } else if (board[i][j] instanceof Queen && board[i][j].getColor() == Color.WHITE) {
-                    System.out.print("â™•");
+                    System.out.print("♕");
                 } else if (board[i][j] instanceof Rook && board[i][j].getColor() == Color.BLACK) {
-                    System.out.print("â™œ");
+                    System.out.print("♜");
                 } else if (board[i][j] instanceof Rook && board[i][j].getColor() == Color.WHITE) {
-                    System.out.print("â™–");
+                    System.out.print("♖");
                 } else if (board[i][j] instanceof Bishop && board[i][j].getColor() == Color.BLACK) {
-                    System.out.print("â™�");
+                    System.out.print("♝");
                 } else if (board[i][j] instanceof Bishop && board[i][j].getColor() == Color.WHITE) {
-                    System.out.print("â™—");
+                    System.out.print("♗");
                 } else if (board[i][j] instanceof Knight && board[i][j].getColor() == Color.BLACK) {
-                    System.out.print("â™ž");
+                    System.out.print("♞");
                 } else if (board[i][j] instanceof Knight && board[i][j].getColor() == Color.WHITE) {
-                    System.out.print("â™˜");
+                    System.out.print("♘");
                 } else if (board[i][j] instanceof Pawn && board[i][j].getColor() == Color.BLACK) {
-                    System.out.print("â™Ÿ");
+                    System.out.print("♟");
                 } else if (board[i][j] instanceof Pawn && board[i][j].getColor() == Color.WHITE) {
-                    System.out.print("â™™");
+                    System.out.print("♙");
                 }
             }
             System.out.println("");

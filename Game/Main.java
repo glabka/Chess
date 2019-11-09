@@ -117,10 +117,13 @@ public class Main {
         pawnPromotion[6][0] = new Pawn(Color.BLACK);
         
         
+        
+        
+        
         boolean userInput = false;
         boolean codeInput = false;
-        boolean realPlayersGame = false;
-        boolean AIGame = true;
+        boolean realPlayersGame = true;
+        boolean AIGame = false;
         if (userInput) {
 //        // Testing of moves - user input    
             Board b = new Board(pawnPromotion);

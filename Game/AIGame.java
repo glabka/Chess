@@ -1,5 +1,7 @@
 package Game;
 
+import AI.AI1;
+import AI.AbstractAI;
 import pieces.Color;
 
 public class AIGame {
@@ -10,13 +12,13 @@ public class AIGame {
         Player currentPlayer = p1; // BE AWARE
         MoveTracker mt = new MoveTracker();
         GameState gs = new GameState();
-        int[] positions = new int[4];
+        AbstractAI AI = new AI1();
         while (true) {
             b.printBoard();
             if (!Rules.isKingCheckmated(currentPlayer.getColor(), b, mt)) {
                 if (!Rules.isKingInStalemate(currentPlayer.getColor(), b, mt)) {
-                    Input.readCoordinates(positions);
-                    if (Rules.move(gs, currentPlayer, b, mt, positions[0], positions[1], positions[2], positions[3])) {
+                    Move mv = AI.nextMove(currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
+                    if (Rules.move(gs, currentPlayer, b, mt, mv)) {
                         if (currentPlayer == p1) {
                             currentPlayer = p2;
                         } else {

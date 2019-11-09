@@ -47,6 +47,10 @@ public class MoveTracker {
         blackKingsideRookMoved = mt.didKingsideRookMove(Color.BLACK);
         blackQueensideRookMoved = mt.didQueensideRookMove(Color.BLACK);
     }
+    
+    public MoveTracker cloneMoveTracker() {
+    	return new MoveTracker(this);
+    }
 
     public void storeMove(Piece piece, int verFrom, int horFrom, int verTo, int horTo) {
         this.piece = piece;
