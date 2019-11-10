@@ -199,30 +199,7 @@ public class Board {
 			throw new NoPawnAtGivenPositionException("No pawn at position " + ver + ", " + hor + ".");
 		}
 
-		Piece newPiece = null;
-		while (true) {
-			System.out.println("Enter q for queen, k for knight, b for bishop or r for rook.");
-			char ch = Input.readChar();
-			String input = String.valueOf(ch);
-			switch (input.toLowerCase()) {
-			case "k":
-				newPiece = new Knight(piece.getColor());
-				break;
-			case "b":
-				newPiece = new Bishop(piece.getColor());
-				break;
-			case "r":
-				newPiece = new Rook(piece.getColor());
-				break;
-			case "q":
-				newPiece = new Queen(piece.getColor());
-				break;
-			}
-			if (newPiece != null) {
-				break;
-			}
-		}
-		board[ver][hor] = newPiece;
+		board[ver][hor] = new Queen(piece.getColor());
 	}
 
 	// throws exception if position is out of bounds
