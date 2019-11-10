@@ -23,6 +23,10 @@ public class Move {
 		this.horTo = coord[3];
 	}
 	
+	public Move getReversedMove() {
+		return new Move(verTo, horTo, verFrom, horFrom);
+	}
+	
 	public int getVerFrom() {
 		return verFrom;
 	}

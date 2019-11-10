@@ -17,7 +17,7 @@ public class AIGame {
             b.printBoard();
             if (!Rules.isKingCheckmated(currentPlayer.getColor(), b, mt)) {
                 if (!Rules.isKingInStalemate(currentPlayer.getColor(), b, mt)) {
-                    Move mv = AI.nextMove(currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
+                    Move mv = AI.nextMove(gs, currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
                     if (Rules.move(gs, currentPlayer, b, mt, mv)) {
                         if (currentPlayer == p1) {
                             currentPlayer = p2;

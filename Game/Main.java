@@ -122,8 +122,8 @@ public class Main {
         
         boolean userInput = false;
         boolean codeInput = false;
-        boolean realPlayersGame = true;
-        boolean AIGame = false;
+        boolean realPlayersGame = false;
+        boolean AIGame = true;
         if (userInput) {
 //        // Testing of moves - user input    
             Board b = new Board(pawnPromotion);
