@@ -20,19 +20,23 @@ public class Game {
         Player currentPlayer = p1; // BE AWARE
         MoveTracker mt = new MoveTracker();
         GameState gs = new GameState();
+        String[] errorMessageHolder = new String[1];
         int[] positions = new int[4];
         while (true) {
             b.printBoard();
             if (!Rules.isKingCheckmated(currentPlayer.getColor(), b, mt)) {
                 if (!Rules.isKingInStalemate(currentPlayer.getColor(), b, mt)) {
                     Input.readCoordinates(positions);
-                    if (Rules.move(gs, currentPlayer, b, mt, positions[0], positions[1], positions[2], positions[3])) {
+                    if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, positions[0], positions[1], positions[2], positions[3])) {
                         if (currentPlayer == p1) {
                             currentPlayer = p2;
                         } else {
                             currentPlayer = p1;
                         }
                     } else {
+                    	if(errorMessageHolder[0] != null) {
+                    		System.out.print(errorMessageHolder[0]);
+                    	}
                         System.out.println("The move is not possible.");
                     }
                 } else {

@@ -22,6 +22,5 @@ public class Player {
     
     public Color getColor(){
         return c;
-    }
-    
+    }    
 }

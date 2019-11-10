@@ -132,11 +132,12 @@ public class Main {
             Player currentPlayer = p1; // BE AWARE
             MoveTracker mt = new MoveTracker();
             GameState gs = new GameState();
+            String[] errorMessageHolder = new String[1];
             int[] positions = new int[4];
             while (true) {
                 b.printBoard();
                 Input.read4Int(positions);
-                if (Rules.move(gs, currentPlayer, b, mt, positions[0], positions[1], positions[2], positions[3])) {
+                if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, positions[0], positions[1], positions[2], positions[3])) {
                     if (currentPlayer == p1) {
                         currentPlayer = p2;
                     } else {
@@ -191,12 +192,12 @@ public class Main {
             Player currentPlayer = p1;
             MoveTracker mt = new MoveTracker();
             GameState gs = new GameState();
-
+            String[] errorMessageHolder = new String[1];
             Integer[][] positions = whiteKingsideCastling;
             for (int i = 0; i < positions.length; i++) {
                 b.printBoard();
                 System.out.println(positions[i][0] + " " + positions[i][1] + " " + positions[i][2] + " " + positions[i][3]);
-                if (Rules.move(gs, currentPlayer, b, mt, positions[i][0], positions[i][1], positions[i][2], positions[i][3])) {
+                if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, positions[i][0], positions[i][1], positions[i][2], positions[i][3])) {
                     if (currentPlayer == p1) {
                         currentPlayer = p2;
                     } else {
