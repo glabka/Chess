@@ -15,6 +15,15 @@ public class GameState {
     public GameState(GameStateEnum state){
         this.state = state;
     }
+    
+    public GameState(GameState gs) {
+    	this.state = gs.getState();
+    	this.errorMessage = gs.getErrorMessage();
+    }
+    
+    public GameState cloneGameState() {
+    	return new GameState(this);
+    }
 
     public void setState(GameStateEnum state) {
         this.state = state;

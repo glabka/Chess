@@ -26,7 +26,10 @@ public class AI2 extends AbstractAI {
 		int maxEval = Integer.MIN_VALUE;
 		Move bestMv = null;
 		for (int i = 0; i < boardEvaluations.size(); i++) {
-			int eval = recursiveSearchCurrentPlayer(1, 0, gs, p, b, mt);
+//			System.out.println("i = " + i); // debug
+			Board newBoard = b.cloneBoard(); // board with move to be played
+			Rules.move(gs, p, newBoard, mt, null, moves.get(i));
+			int eval = recursiveSearchCurrentPlayer(2, 0, gs, p, newBoard, mt);
 			if (maxEval <= eval) {
 				maxEval = eval;
 				bestMv = moves.get(i);
@@ -36,18 +39,21 @@ public class AI2 extends AbstractAI {
 		return bestMv;
 	}
 
-	// recursion on already played move. Returns biggest BoardEvaluation
+	// recursion on already played move. Returns biggest BoardEvaluation. depth is indexed from 0
 	private int recursiveSearchCurrentPlayer(int maxDepth, int depth, GameState gs, Player currentPlayer, Board b,
 			MoveTracker mt) {
 		if (maxDepth == depth) {
 			return BoardEvaluation2.getEvaluation(currentPlayer, b, mt);
 		} else if (depth != 0) {
 			Move mv = nextStep(gs, currentPlayer, b, mt);
+			if (mv == null) { // current player is in checkmate or stalemate
+				return Integer.MIN_VALUE;
+			}
 			Board newBoard = b.cloneBoard();
-			Rules.move(gs, currentPlayer, b, mt, null, mv);
-			return recursiveSearchOppositePlayer(maxDepth, depth + 1, gs, currentPlayer, newBoard, mt);
+			Rules.move(gs, currentPlayer, newBoard, mt, null, mv);
+			return recursiveSearchOppositePlayer(maxDepth, depth + 1, gs.cloneGameState(), currentPlayer, newBoard, mt.cloneMoveTracker());
 		} else {
-			return recursiveSearchOppositePlayer(maxDepth, depth + 1, gs, currentPlayer, b, mt);
+			return recursiveSearchOppositePlayer(maxDepth, depth + 1, gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
 		}
 	}
 
@@ -59,6 +65,9 @@ public class AI2 extends AbstractAI {
 			Player opponent = getOpponent(currentPlayer);
 			Move mv = nextStep(gs, opponent, b, mt);
 			Board newBoard = b.cloneBoard();
+			if (mv == null) { // opponent is in checkmate or stalemate
+				return Integer.MAX_VALUE;
+			}
 			Rules.move(gs, opponent, b, mt, null, mv);
 			return recursiveSearchCurrentPlayer(maxDepth, depth + 1, gs, currentPlayer, newBoard, mt);
 		}

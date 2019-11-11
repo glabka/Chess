@@ -167,6 +167,29 @@ public class Board {
 			System.out.println("");
 		}
 	}
+	
+	public void printDebugCodeBoard() {
+		System.out.println("{");
+		for (int i = 0; i < 8; i++) {
+			System.out.print("{");
+			for (int j = 0; j < 8; j++) {
+				Piece piece = this.board[i][j];
+				if(piece != null) {
+					System.out.print("(Piece) new " + piece.getClass().getName() + "(Color." + piece.getColor()+ ")");
+				} else {
+					System.out.print("null");
+				}
+				if(j < 7) {
+					System.out.print(",");
+				}
+			}
+			System.out.println("}");
+			if(i < 7) {
+				System.out.print(",");
+			}
+		}
+		System.out.println("}");
+	}
 
 	public void movePiece(int verFrom, int horFrom, int verTo, int horTo) {
 		checkPosition(verFrom, horFrom, verTo, horTo);

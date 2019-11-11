@@ -1,10 +1,10 @@
 package Game;
 
 public class Move {
-	int verFrom;
-	int horFrom;
-	int verTo;
-	int horTo;
+	private int verFrom;
+	private int horFrom;
+	private int verTo;
+	private int horTo;
 	
 	public Move(int verFrom, int horFrom, int verTo, int horTo) {
 		this.verFrom = verFrom;

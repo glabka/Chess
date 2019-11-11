@@ -122,6 +122,7 @@ public class Main {
         
         boolean userInput = false;
         boolean codeInput = false;
+        boolean alreadyPlayedGame = false;
         boolean realPlayersGame = false;
         boolean AIGame = true;
         if (userInput) {
@@ -151,10 +152,6 @@ public class Main {
                 }
 
             }
-            //
-            //
-            //
-            //
         } else if (codeInput) {
             // Testing of moves - input in code
             // moves
@@ -208,6 +205,43 @@ public class Main {
                 }
             }
             b.printBoard();
+        } else if (alreadyPlayedGame) {
+        	Piece[][] falseCheckMate = {
+        	{(Piece) new pieces.Rook(Color.BLACK),(Piece) new pieces.Knight(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Queen(Color.BLACK),(Piece) new pieces.King(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Knight(Color.BLACK),null}
+        	,{(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),null,null,null}
+        	,{null,null,null,null,null,null,null,null}
+        	,{null,null,null,null,null,(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.WHITE),null}
+        	,{null,null,null,null,(Piece) new pieces.Pawn(Color.WHITE),null,null,(Piece) new pieces.Rook(Color.WHITE)}
+        	,{null,null,null,null,null,null,null,null}
+        	,{(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),null,null,(Piece) new pieces.Bishop(Color.WHITE),null}
+        	,{(Piece) new pieces.Rook(Color.WHITE),(Piece) new pieces.Knight(Color.WHITE),(Piece) new pieces.Bishop(Color.WHITE),(Piece) new pieces.Queen(Color.WHITE),(Piece) new pieces.King(Color.WHITE),null,(Piece) new pieces.Knight(Color.WHITE),null}
+        	};
+        	Board b = new Board(falseCheckMate);
+            Player p1 = new Player(Color.WHITE);
+            Player p2 = new Player(Color.BLACK);
+            Player currentPlayer = p1; // BE AWARE
+            MoveTracker mt = new MoveTracker();
+            GameState gs = new GameState();
+            String[] errorMessageHolder = new String[1];
+            int[] positions = new int[4];
+            while (true) {
+                b.printBoard();
+//                b.printBoardDebug(); // debug
+                Move mv = Input.getMove();
+                if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, mv)) {
+                    if (currentPlayer == p1) {
+                        currentPlayer = p2;
+                    } else {
+                        currentPlayer = p1;
+                    }
+                } else {
+                    if (gs.getState() != GameStateEnum.NORMAL) {
+                        System.out.println(gs.getState());
+                    }
+                    System.out.println("The move is not possible.");
+                }
+
+            }
         } else if (realPlayersGame) {
             Game g = new Game();
             g.startGame();

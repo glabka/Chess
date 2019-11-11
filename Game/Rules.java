@@ -21,6 +21,9 @@ import pieces.Queen;
 public class Rules {
 
 	public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, String[] errorMessage, Move mv) {
+		if(mv == null) {
+			throw new IllegalArgumentException("Move can't be null.");
+		}
 		return move(gs, p, b, mt, errorMessage, mv.getVerFrom(), mv.getHorFrom(), mv.getVerTo(), mv.getHorTo());
 	}
 
@@ -40,6 +43,9 @@ public class Rules {
 	// MovesEnum
 	public static boolean move(GameState gs, Player p, Board b, MoveTracker mt, String[] errorMessage, int verFrom,
 			int horFrom, int verTo, int horTo) {
+		if(gs == null) {
+			throw new IllegalArgumentException("GameState can't be null.");
+		}
 		if (p == null) {
 			throw new IllegalArgumentException("Player can't be null.");
 		}
@@ -73,7 +79,6 @@ public class Rules {
 	}
 
 	public static void checkGameState(Color playersColor, Board b, MoveTracker mt, GameState gs) {
-		// TODO: isKingInCheck -> gs. inCheck
 		if (isKingInStalemate(playersColor, b, mt)) {
 			gs.setState(GameStateEnum.STALEMATE);
 		} else if (isKingCheckmated(playersColor, b, mt)) {
@@ -82,6 +87,14 @@ public class Rules {
 			} else {
 				gs.setState(GameStateEnum.BLACK_KING_CHECKMATED);
 			}
+		} else if(isKingInCheck(b, playersColor, mt)) {
+			if (playersColor == Color.WHITE) {
+				gs.setState(GameStateEnum.WHITE_KING_IN_CHECK);
+			} else {
+				gs.setState(GameStateEnum.BLACK_KING_IN_CHECK);
+			}
+		} else {
+			gs.setState(GameStateEnum.NORMAL);
 		}
 	}
 
