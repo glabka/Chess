@@ -1,6 +1,9 @@
 package Game;
 
 import pieces.Color;
+
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
 import pieces.Bishop;
 import pieces.Pawn;
 import pieces.Rook;
@@ -167,24 +170,82 @@ public class Board {
 			System.out.println("");
 		}
 	}
-	
+
+	// row is <-1, 7>
+	// does not end with end of the line
+	public void printRow(int row, boolean debug) {
+		String fillingChar1 = "*"; // "╳", "◯"
+		String fillingChar2 = ".";
+		if (row == -1) {
+//			System.out.print(" ");
+			for (int i = 0; i < board.length; i++) {
+				if (!debug) {
+					System.out.print(fillingChar1 + indexToPositionChar(i));
+				} else {
+					System.out.print(fillingChar1 + i);
+				}
+			}
+		} else {
+			for (int i = 0; i < board[row].length; i++) {
+				if (i > 0) {
+					System.out.print(" ");
+				} else if (debug) {
+					System.out.print(row);
+				} else {
+					System.out.print(indexToPositionNum(row) + " ");
+				}
+				if (board[row][i] == null) {
+					if (((row + 1) % 2 == 0 && (i + 1) % 2 == 0) || ((row + 1) % 2 != 0 && (i + 1) % 2 != 0)) {
+						System.out.print(fillingChar1);
+					} else {
+						System.out.print(fillingChar2);
+					}
+				} else if (board[row][i] instanceof King && board[row][i].getColor() == Color.BLACK) {
+					System.out.print("♚");
+				} else if (board[row][i] instanceof King && board[row][i].getColor() == Color.WHITE) {
+					System.out.print("♔");
+				} else if (board[row][i] instanceof Queen && board[row][i].getColor() == Color.BLACK) {
+					System.out.print("♛");
+				} else if (board[row][i] instanceof Queen && board[row][i].getColor() == Color.WHITE) {
+					System.out.print("♕");
+				} else if (board[row][i] instanceof Rook && board[row][i].getColor() == Color.BLACK) {
+					System.out.print("♜");
+				} else if (board[row][i] instanceof Rook && board[row][i].getColor() == Color.WHITE) {
+					System.out.print("♖");
+				} else if (board[row][i] instanceof Bishop && board[row][i].getColor() == Color.BLACK) {
+					System.out.print("♝");
+				} else if (board[row][i] instanceof Bishop && board[row][i].getColor() == Color.WHITE) {
+					System.out.print("♗");
+				} else if (board[row][i] instanceof Knight && board[row][i].getColor() == Color.BLACK) {
+					System.out.print("♞");
+				} else if (board[row][i] instanceof Knight && board[row][i].getColor() == Color.WHITE) {
+					System.out.print("♘");
+				} else if (board[row][i] instanceof Pawn && board[row][i].getColor() == Color.BLACK) {
+					System.out.print("♟");
+				} else if (board[row][i] instanceof Pawn && board[row][i].getColor() == Color.WHITE) {
+					System.out.print("♙");
+				}
+			}
+		}
+	}
+
 	public void printDebugCodeBoard() {
 		System.out.println("{");
 		for (int i = 0; i < 8; i++) {
 			System.out.print("{");
 			for (int j = 0; j < 8; j++) {
 				Piece piece = this.board[i][j];
-				if(piece != null) {
-					System.out.print("(Piece) new " + piece.getClass().getName() + "(Color." + piece.getColor()+ ")");
+				if (piece != null) {
+					System.out.print("(Piece) new " + piece.getClass().getName() + "(Color." + piece.getColor() + ")");
 				} else {
 					System.out.print("null");
 				}
-				if(j < 7) {
+				if (j < 7) {
 					System.out.print(",");
 				}
 			}
 			System.out.println("}");
-			if(i < 7) {
+			if (i < 7) {
 				System.out.print(",");
 			}
 		}
@@ -266,4 +327,42 @@ public class Board {
 		return board[0].length;
 	}
 
+    @Override
+    public boolean equals(Object o) {
+    	if(this == o) {
+    		return true;
+    	}
+    	
+    	if(!(o instanceof Board)) {
+    		return false;
+    	}
+    	
+    	Board b = (Board) o;
+    	for (int i = 0; i < 8; i++) {
+    		for (int j = 0; j < 8; j++) {
+    			Piece piece = b.getPiece(i, j);
+    			Piece piece2 = getPiece(i, j);
+				if(piece == null) {
+					if(piece2 != null) {
+						return false;
+					}
+				} else if (!piece.equals(piece2)) {
+					return false;
+				}
+			}
+		}
+    	
+    	return true;
+    }
+    
+    @Override
+    public int hashCode() {
+    	double val = 0;
+    	for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				val += Math.pow(10, i * 10 + j) * (board[i][j] == null ? 0 : board[i][j].hashCode());
+			}
+		}
+    	return Double.hashCode(val);
+    }	
 }

@@ -109,7 +109,7 @@ public class Rules {
 		Piece movingPiece = b.getPiece(verFrom, horFrom);
 
 		// Tracking whether King or rooks moved (important for castling)
-		storeKingsOrRooksMove(movingPiece, mt, horFrom);
+		storeKingsOrRooksMove(movingPiece, mt, horFrom); // TODO: why is there only one coordinate?
 
 		mt.storeMove(movingPiece, verFrom, horFrom, verTo, horTo);
 		if (mType.getMoveType() == MovesEnum.STANDARD) {
@@ -388,14 +388,8 @@ public class Rules {
 					mType.setMoveType(MovesEnum.STANDARD);
 				}
 				return true;
-			} else if (verFrom == 4 && mt.getPiece() instanceof Pawn && mt.getVerFrom() == 6 && mt.getVerTo() == 4 // last
-																													// move
-																													// of
-																													// Pawn
-																													// was
-																													// double
-																													// step
-					&& (horFrom - 1 == mt.getHorTo() || horFrom + 1 == mt.getHorTo()) && horTo == mt.getHorTo()) {
+			} else if (mt.getPiece() instanceof Pawn && mt.getVerFrom() == 6 && mt.getVerTo() == 4 // last move of Pawn was double step
+					&& verFrom == 4 && verTo == 5 && (horFrom - 1 == mt.getHorTo() || horFrom + 1 == mt.getHorTo()) && horTo == mt.getHorTo()) {
 				mType.setMoveType(MovesEnum.EN_PASSANT);
 				return true;
 			} else {
@@ -424,14 +418,8 @@ public class Rules {
 					mType.setMoveType(MovesEnum.STANDARD);
 				}
 				return true;
-			} else if (verFrom == 3 && mt.getPiece() instanceof Pawn && mt.getVerFrom() == 1 && mt.getVerTo() == 3 // last
-																													// move
-																													// of
-																													// Pawn
-																													// was
-																													// double
-																													// step
-					&& (horFrom - 1 == mt.getHorTo() || horFrom + 1 == mt.getHorTo()) && horTo == mt.getHorTo()) {
+			} else if (mt.getPiece() instanceof Pawn && mt.getVerFrom() == 1 && mt.getVerTo() == 3 // last move of Pawn was double step
+					&& verFrom == 3 && verTo == 2 && (horFrom - 1 == mt.getHorTo() || horFrom + 1 == mt.getHorTo()) && horTo == mt.getHorTo()) {
 				mType.setMoveType(MovesEnum.EN_PASSANT);
 				return true;
 			} else {

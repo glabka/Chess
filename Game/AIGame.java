@@ -6,8 +6,17 @@ import AI.AbstractAI;
 import pieces.Color;
 
 public class AIGame {
+	private Board b;
+	
+	public AIGame() {
+		b = new Board();
+	}
+	
+	public AIGame(Board b) {
+		this.b = b;
+	}
+	
 	public void startGame() {
-		Board b = new Board();
 		Player p1 = new Player(Color.WHITE);
 		Player p2 = new Player(Color.BLACK);
 		Player currentPlayer = p1; // BE AWARE
@@ -22,21 +31,16 @@ public class AIGame {
 			counter++;
 			System.out.println("counter = " + counter);
 			b.printBoardDebug(); // debug
-//			b.printDebugCodeBoard(); // debug
-//			System.out.println("isKingCheckmated(" + currentPlayer.getColor() + ") = " + Rules.isKingCheckmated(currentPlayer.getColor(), b, mt)); // debug
-//			System.out.println("isKingCheckmated(" + Color.opossiteColor(currentPlayer.getColor()) + ") = " + Rules.isKingCheckmated(Color.opossiteColor(currentPlayer.getColor()), b, mt)); // debug
-//			System.out.println("isKingInStalemate(" + currentPlayer.getColor() + ") = " + Rules.isKingInStalemate(currentPlayer.getColor(), b, mt)); // debug
-//			System.out.println("isKingInStalemate(" + Color.opossiteColor(currentPlayer.getColor()) + ") = " + Rules.isKingInStalemate(Color.opossiteColor(currentPlayer.getColor()), b, mt)); // debug
 			if (!Rules.isKingCheckmated(currentPlayer.getColor(), b, mt)) {
 				if (!Rules.isKingInStalemate(currentPlayer.getColor(), b, mt)) {
 					Move mv;
 					if (currentPlayer.getColor() == Color.BLACK) {
 //						mv = AI1.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
-						mv = AI1.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
+						mv = AI2.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
 					} else {
 						mv = AI2.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
-//						System.out.println("mv == " + mv + " " + mv.getVerFrom() + " "+ mv.getHorFrom() + " " + mv.getVerTo() + " " + mv.getHorTo()); // debug
 					}
+					
 					if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, mv)) {
 						if (currentPlayer == p1) {
 							currentPlayer = p2;
@@ -45,6 +49,9 @@ public class AIGame {
 						}
 					} else {
 						System.out.println("The move is not possible.");
+						if(errorMessageHolder[0] != null) {
+	                        System.out.println(errorMessageHolder[0]);
+	                    }
 					}
 				} else {
 					System.out.println("Stalemate, the result is draw.");

@@ -10,9 +10,29 @@ package pieces;
  *
  * @author glabka
  */
-public class Rook extends Piece{
-    
-       public Rook(Color color) {
-        super(color);
+public class Rook extends Piece {
+
+	public Rook(Color color) {
+		super(color);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (!(o instanceof Rook)) {
+			return false;
+		}
+
+		return true;
+	}
+
+    @Override
+    public int hashCode() {
+    	int val = 6;
+    	return this.getColor() == Color.BLACK ? val : -val;
     }
+
 }

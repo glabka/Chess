@@ -9,6 +9,8 @@ import Game.MoveTracker;
 import Game.Player;
 import Game.Rules;
 import pieces.Color;
+import pieces.Pawn;
+import pieces.Piece;
 
 public class AI2 extends AbstractAI {
 
@@ -16,7 +18,7 @@ public class AI2 extends AbstractAI {
 	public Move nextMove(GameState gs, Player p, Board b, MoveTracker mt) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		ArrayList<Integer> boardEvaluations = new ArrayList<Integer>();
-
+		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				getMovesAndEvals(gs, p, b, mt, i, j, moves, boardEvaluations);
@@ -26,10 +28,10 @@ public class AI2 extends AbstractAI {
 		int maxEval = Integer.MIN_VALUE;
 		Move bestMv = null;
 		for (int i = 0; i < boardEvaluations.size(); i++) {
-//			System.out.println("i = " + i); // debug
 			Board newBoard = b.cloneBoard(); // board with move to be played
+
 			Rules.move(gs, p, newBoard, mt, null, moves.get(i));
-			int eval = recursiveSearchCurrentPlayer(2, 0, gs, p, newBoard, mt);
+			int eval = recursiveSearchCurrentPlayer(3, 0, gs.cloneGameState(), p, newBoard, mt.cloneMoveTracker());
 			if (maxEval <= eval) {
 				maxEval = eval;
 				bestMv = moves.get(i);
@@ -64,15 +66,28 @@ public class AI2 extends AbstractAI {
 		} else {
 			Player opponent = getOpponent(currentPlayer);
 			Move mv = nextStep(gs, opponent, b, mt);
-			Board newBoard = b.cloneBoard();
 			if (mv == null) { // opponent is in checkmate or stalemate
 				return Integer.MAX_VALUE;
 			}
 			Rules.move(gs, opponent, b, mt, null, mv);
-			return recursiveSearchCurrentPlayer(maxDepth, depth + 1, gs, currentPlayer, newBoard, mt);
+			return recursiveSearchCurrentPlayer(maxDepth, depth + 1, gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
 		}
 	}
 
+	private void printDebugBoard(int depth, Board b) {
+		for (int j = 0; j < depth; j++) {
+			System.out.print("\t");
+		}
+		System.out.println("depth == " + depth);
+		for (int i = -1; i < 8; i++) {
+			for (int j = 0; j < depth; j++) {
+				System.out.print("\t");
+			}
+			b.printRow(i, true);
+			System.out.println("");
+		}
+	}
+	
 	private Player getOpponent(Player p) {
 		if (p.getColor() == Color.BLACK) {
 			return new Player(Color.WHITE);
@@ -123,7 +138,7 @@ public class AI2 extends AbstractAI {
 			for (int j = 0; j < 8; j++) {
 				Board newBoard = b.cloneBoard();
 				Move mv = new Move(verFrom, horFrom, i, j);
-				if (Rules.move(gs, p, newBoard, mt, null, mv)) {
+				if (Rules.move(gs.cloneGameState(), p, newBoard, mt.cloneMoveTracker(), null, mv)) {
 					moves.add(mv);
 					boardEvals.add(BoardEvaluation2.getEvaluation(p, newBoard, mt));
 				}

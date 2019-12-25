@@ -15,4 +15,23 @@ public class King extends Piece {
     public King(Color color) {
         super(color);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if(this == o) {
+    		return true;
+    	}
+    	
+    	if(!(o instanceof King)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    @Override
+    public int hashCode() {
+    	int val = 2;
+    	return this.getColor() == Color.BLACK ? val : -val;
+    }
 }

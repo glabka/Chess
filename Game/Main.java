@@ -51,6 +51,11 @@ public class Main {
 //
 //
 //
+    	
+    	
+    	
+//    	System.exit(0);
+    	
         // for all cases below it is black players turn
         Piece[][] stalemate1 = new Piece[8][8];
         stalemate1[0][7] = new King(Color.BLACK);
@@ -118,16 +123,16 @@ public class Main {
         
         
         
-        
-        
         boolean userInput = false;
         boolean codeInput = false;
         boolean alreadyPlayedGame = false;
-        boolean realPlayersGame = false;
+        boolean realPlayersGame = true;
         boolean AIGame = true;
+        boolean AIGameAlreadyPlayed = false;
         if (userInput) {
 //        // Testing of moves - user input    
-            Board b = new Board(pawnPromotion);
+//            Board b = new Board(pawnPromotion);
+        	Board b = new Board();
             Player p1 = new Player(Color.WHITE);
             Player p2 = new Player(Color.BLACK);
             Player currentPlayer = p1; // BE AWARE
@@ -137,8 +142,9 @@ public class Main {
             int[] positions = new int[4];
             while (true) {
                 b.printBoard();
-                Input.read4Int(positions);
-                if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, positions[0], positions[1], positions[2], positions[3])) {
+//                Input.read4Int(positions);
+                Move mv = Input.getMove();
+                if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, mv)){
                     if (currentPlayer == p1) {
                         currentPlayer = p2;
                     } else {
@@ -202,31 +208,32 @@ public class Main {
                     }
                 } else {
                     System.out.println("The move is not possible.");
+                    if(errorMessageHolder[0] != null) {
+                        System.out.println(errorMessageHolder[0]);
+                    }
                 }
             }
             b.printBoard();
         } else if (alreadyPlayedGame) {
-        	Piece[][] falseCheckMate = {
-        	{(Piece) new pieces.Rook(Color.BLACK),(Piece) new pieces.Knight(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Queen(Color.BLACK),(Piece) new pieces.King(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Knight(Color.BLACK),null}
-        	,{(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),null,null,null}
-        	,{null,null,null,null,null,null,null,null}
-        	,{null,null,null,null,null,(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.WHITE),null}
-        	,{null,null,null,null,(Piece) new pieces.Pawn(Color.WHITE),null,null,(Piece) new pieces.Rook(Color.WHITE)}
-        	,{null,null,null,null,null,null,null,null}
-        	,{(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),null,null,(Piece) new pieces.Bishop(Color.WHITE),null}
-        	,{(Piece) new pieces.Rook(Color.WHITE),(Piece) new pieces.Knight(Color.WHITE),(Piece) new pieces.Bishop(Color.WHITE),(Piece) new pieces.Queen(Color.WHITE),(Piece) new pieces.King(Color.WHITE),null,(Piece) new pieces.Knight(Color.WHITE),null}
-        	};
-        	Board b = new Board(falseCheckMate);
+        	Piece[][] errorState = {
+    			{null,(Piece) new pieces.Knight(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Queen(Color.BLACK),(Piece) new pieces.King(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Knight(Color.BLACK),(Piece) new pieces.Rook(Color.BLACK)}
+    			,{null,null,null,(Piece) new pieces.Pawn(Color.BLACK),null,null,null,null}
+    			,{(Piece) new pieces.Rook(Color.BLACK),null,null,null,(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),null,(Piece) new pieces.Pawn(Color.BLACK)}
+    			,{null,null,(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),null,(Piece) new pieces.Pawn(Color.WHITE)}
+    			,{(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),null,null,null,null,(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Bishop(Color.WHITE)}
+    			,{null,null,null,null,null,null,null,null}
+    			,{(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),null,null,null,null,null}
+    			,{(Piece) new pieces.Rook(Color.WHITE),(Piece) new pieces.Knight(Color.WHITE),null,(Piece) new pieces.Queen(Color.WHITE),(Piece) new pieces.King(Color.WHITE),(Piece) new pieces.Bishop(Color.WHITE),(Piece) new pieces.Knight(Color.WHITE),(Piece) new pieces.Rook(Color.WHITE)}
+    			};
+        	Board b = new Board(errorState);
             Player p1 = new Player(Color.WHITE);
             Player p2 = new Player(Color.BLACK);
             Player currentPlayer = p1; // BE AWARE
             MoveTracker mt = new MoveTracker();
             GameState gs = new GameState();
             String[] errorMessageHolder = new String[1];
-            int[] positions = new int[4];
             while (true) {
                 b.printBoard();
-//                b.printBoardDebug(); // debug
                 Move mv = Input.getMove();
                 if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, mv)) {
                     if (currentPlayer == p1) {
@@ -239,6 +246,9 @@ public class Main {
                         System.out.println(gs.getState());
                     }
                     System.out.println("The move is not possible.");
+                    if(errorMessageHolder[0] != null) {
+                        System.out.println(errorMessageHolder[0]);
+                    }
                 }
 
             }
@@ -247,6 +257,21 @@ public class Main {
             g.startGame();
         } else if (AIGame) {
         	AIGame AIG = new AIGame();
+        	AIG.startGame();
+        } else if (AIGameAlreadyPlayed) {
+        	System.out.println("AI Game Already Played");
+        	Piece[][] errorState = {
+    			{null,(Piece) new pieces.Knight(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Queen(Color.BLACK),(Piece) new pieces.King(Color.BLACK),(Piece) new pieces.Bishop(Color.BLACK),(Piece) new pieces.Knight(Color.BLACK),(Piece) new pieces.Rook(Color.BLACK)}
+    			,{null,null,null,(Piece) new pieces.Pawn(Color.BLACK),null,null,null,null}
+    			,{(Piece) new pieces.Rook(Color.BLACK),null,null,null,(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),null,(Piece) new pieces.Pawn(Color.BLACK)}
+    			,{null,null,(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),null,(Piece) new pieces.Pawn(Color.WHITE)}
+    			,{(Piece) new pieces.Pawn(Color.BLACK),(Piece) new pieces.Pawn(Color.BLACK),null,null,null,null,(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Bishop(Color.WHITE)}
+    			,{null,null,null,null,null,null,null,null}
+    			,{(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),(Piece) new pieces.Pawn(Color.WHITE),null,null,null,null,null}
+    			,{(Piece) new pieces.Rook(Color.WHITE),(Piece) new pieces.Knight(Color.WHITE),null,(Piece) new pieces.Queen(Color.WHITE),(Piece) new pieces.King(Color.WHITE),(Piece) new pieces.Bishop(Color.WHITE),(Piece) new pieces.Knight(Color.WHITE),(Piece) new pieces.Rook(Color.WHITE)}
+    			};
+        	Board b = new Board(errorState);
+        	AIGame AIG = new AIGame(b);
         	AIG.startGame();
         }
 

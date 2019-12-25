@@ -38,6 +38,9 @@ public class Game {
                     		System.out.print(errorMessageHolder[0]);
                     	}
                         System.out.println("The move is not possible.");
+                        if(errorMessageHolder[0] != null) {
+                            System.out.println(errorMessageHolder[0]);
+                        }
                     }
                 } else {
                     System.out.println("Stalemate, the result is draw.");

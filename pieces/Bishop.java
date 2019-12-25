@@ -15,4 +15,24 @@ public class Bishop extends Piece{
     public Bishop(Color color) {
         super(color);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if(this == o) {
+    		return true;
+    	}
+    	
+    	if(!(o instanceof Bishop)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    @Override
+    public int hashCode() {
+    	int val = 1;
+    	return this.getColor() == Color.BLACK ? val : -val;
+    }
+    
 }

@@ -51,7 +51,7 @@ public class AI1 extends AbstractAI {
 			for(int j = 0; j < 8; j++) {
 				Board newBoard = b.cloneBoard();
 				Move mv = new Move(verFrom, horFrom, i, j);
-				if(Rules.move(gs, p, newBoard, mt, null, mv)) {
+				if(Rules.move(gs.cloneGameState(), p, newBoard, mt.cloneMoveTracker(), null, mv)) {
 					moves.add(mv);
 					boardEvals.add(BoardEvaluation2.getEvaluation(p, newBoard, mt));
 				}

@@ -21,5 +21,4 @@ public abstract class Piece {
     public Color getColor(){
         return color;
     }
-
 }

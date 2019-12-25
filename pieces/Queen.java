@@ -15,4 +15,23 @@ public class Queen extends Piece{
     public Queen(Color color) {
         super(color);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if(this == o) {
+    		return true;
+    	}
+    	
+    	if(!(o instanceof Queen)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    @Override
+    public int hashCode() {
+    	int val = 5;
+    	return this.getColor() == Color.BLACK ? val : -val;
+    }
 }

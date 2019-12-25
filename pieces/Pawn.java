@@ -15,4 +15,23 @@ public class Pawn extends Piece {
     public Pawn(Color color) {
         super(color);
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if(this == o) {
+    		return true;
+    	}
+    	
+    	if(!(o instanceof Pawn)) {
+    		return false;
+    	}
+    	
+    	return true;
+    }
+    
+    @Override
+    public int hashCode() {
+    	int val = 4;
+    	return this.getColor() == Color.BLACK ? val : -val;
+    }
 }
