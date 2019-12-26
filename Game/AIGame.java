@@ -3,6 +3,7 @@ package Game;
 import AI.AI1;
 import AI.AI2;
 import AI.AbstractAI;
+import AI.BoardEvaluation3;
 import pieces.Color;
 
 public class AIGame {
@@ -24,7 +25,9 @@ public class AIGame {
 		GameState gs = new GameState();
 		String[] errorMessageHolder = new String[1];
 		AbstractAI AI1 = new AI1();
+		AbstractAI AI1be3 = new AI1(new BoardEvaluation3());
 		AbstractAI AI2 = new AI2();
+		AbstractAI AI2be3 = new AI2(new BoardEvaluation3());
 		int counter = 0;
 		while (true) {
 //            b.printBoard();
@@ -35,10 +38,10 @@ public class AIGame {
 				if (!Rules.isKingInStalemate(currentPlayer.getColor(), b, mt)) {
 					Move mv;
 					if (currentPlayer.getColor() == Color.BLACK) {
-//						mv = AI1.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
-						mv = AI2.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
+						mv = AI1be3.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
+//						mv = AI2.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
 					} else {
-						mv = AI2.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
+						mv = AI2be3.nextMove(gs.cloneGameState(), currentPlayer, b.cloneBoard(), mt.cloneMoveTracker());
 					}
 					
 					if (Rules.move(gs, currentPlayer, b, mt, errorMessageHolder, mv)) {

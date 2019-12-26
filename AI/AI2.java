@@ -13,7 +13,17 @@ import pieces.Pawn;
 import pieces.Piece;
 
 public class AI2 extends AbstractAI {
-
+	
+	BoardEvaluation bEval;
+	
+	public AI2() {
+		bEval = new BoardEvaluation2();
+	}
+	
+	public AI2(BoardEvaluation bEval) {
+		this.bEval = bEval;
+	}
+	
 	@Override
 	public Move nextMove(GameState gs, Player p, Board b, MoveTracker mt) {
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -45,7 +55,7 @@ public class AI2 extends AbstractAI {
 	private int recursiveSearchCurrentPlayer(int maxDepth, int depth, GameState gs, Player currentPlayer, Board b,
 			MoveTracker mt) {
 		if (maxDepth == depth) {
-			return BoardEvaluation2.getEvaluation(currentPlayer, b, mt);
+			return bEval.getEvaluation(currentPlayer, b, mt);
 		} else if (depth != 0) {
 			Move mv = nextStep(gs, currentPlayer, b, mt);
 			if (mv == null) { // current player is in checkmate or stalemate
@@ -62,7 +72,7 @@ public class AI2 extends AbstractAI {
 	private int recursiveSearchOppositePlayer(int maxDepth, int depth, GameState gs, Player currentPlayer, Board b,
 			MoveTracker mt) {
 		if (maxDepth == depth) {
-			return BoardEvaluation2.getEvaluation(currentPlayer, b, mt);
+			return bEval.getEvaluation(currentPlayer, b, mt);
 		} else {
 			Player opponent = getOpponent(currentPlayer);
 			Move mv = nextStep(gs, opponent, b, mt);
@@ -140,7 +150,7 @@ public class AI2 extends AbstractAI {
 				Move mv = new Move(verFrom, horFrom, i, j);
 				if (Rules.move(gs.cloneGameState(), p, newBoard, mt.cloneMoveTracker(), null, mv)) {
 					moves.add(mv);
-					boardEvals.add(BoardEvaluation2.getEvaluation(p, newBoard, mt));
+					boardEvals.add(bEval.getEvaluation(p, newBoard, mt));
 				}
 			}
 		}

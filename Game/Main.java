@@ -126,7 +126,7 @@ public class Main {
         boolean userInput = false;
         boolean codeInput = false;
         boolean alreadyPlayedGame = false;
-        boolean realPlayersGame = true;
+        boolean realPlayersGame = false;
         boolean AIGame = true;
         boolean AIGameAlreadyPlayed = false;
         if (userInput) {

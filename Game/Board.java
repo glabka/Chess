@@ -105,6 +105,18 @@ public class Board {
 		}
 		return (char) (index + 97);
 	}
+	
+	/**
+	 * Transpose vertical index of black piece to coordinates of white piece
+	 * @param index
+	 * @return
+	 */
+	public static int transposeVerIndex(int index) {
+		if (index < 0 || index > 7) {
+			throw new IllegalArgumentException();
+		}
+		return 7 - index;
+	}
 
 	public void printBoard() {
 		printBoard(false);

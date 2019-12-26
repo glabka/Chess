@@ -12,9 +12,10 @@ import pieces.Piece;
 import pieces.Queen;
 import pieces.Rook;
 
-public class BoardEvaluation1 {
+public class BoardEvaluation1 implements BoardEvaluation{
 	
-	public static int getEvaluation(Player p, Board b, MoveTracker mt) {
+	@Override
+	public int getEvaluation(Player p, Board b, MoveTracker mt) {
 		int value = 0;
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {

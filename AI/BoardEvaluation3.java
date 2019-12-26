@@ -12,18 +12,63 @@ import pieces.Piece;
 import pieces.Queen;
 import pieces.Rook;
 
-public class BoardEvaluation2 implements BoardEvaluation{
+public class BoardEvaluation3 implements BoardEvaluation {
 	
 	@Override
 	public int getEvaluation(Player p, Board b, MoveTracker mt) {
 		int value = 0;
 		for(int i = 0; i < 8; i++) {
 			for(int j = 0; j < 8; j++) {
-				value += getPiecesValue(p, b, mt, i, j);
+				value += getPositionCoeficient(p, b, i, j) * getPiecesValue(p, b, mt, i, j);
 			}
 		}
 		return value;
 	}
+	
+	private static int getPositionCoeficient(Player p, Board b, int ver, int hor) {
+		// surrounding players own king		
+		int[] kingsPos = new int[2];
+		findKing(b, p.getColor(), kingsPos);
+		
+		if(isPieceShieldingKing(p.getColor(), ver, hor, kingsPos[0], kingsPos[1])) {
+			return 3; 
+		} else {
+			return 1;
+		}
+	}
+	
+	private static boolean isPieceShieldingKing(Color col, int ver, int hor, int kingsVer, int kingsHor) {
+		if(Color.WHITE == col) {
+			return isPieceShieldingWhiteKing(ver, hor, kingsVer, kingsHor);
+		} else {
+			// by transposing vertical coordinates shielding of Black king is evaluated
+			return isPieceShieldingWhiteKing(Board.transposeVerIndex(ver), hor, Board.transposeVerIndex(kingsVer), kingsHor);
+		}
+		
+	}
+	
+	private static boolean isPieceShieldingWhiteKing(int ver, int hor, int kingsVer, int kingsHor) {
+		if((ver == kingsVer || ver + 1 == kingsVer) && (hor == kingsHor || hor + 1 == kingsHor || hor - 1 == kingsHor)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private static void findKing(Board b, Color col, int[] kingsPos) {
+		Piece piece;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				piece = b.getPiece(i,j);
+				if(piece instanceof King && piece.getColor() == col) {
+					kingsPos[0] = i;
+					kingsPos[1] = j;
+				}
+			}
+		}
+	}
+	
+	
 	
 	private static int getPiecesValue(Player p, Board b, MoveTracker mt, int ver, int hor) {
 		Piece piece = b.getPiece(ver, hor);
@@ -63,5 +108,4 @@ public class BoardEvaluation2 implements BoardEvaluation{
 		
 		return value;
 	}
-	
 }

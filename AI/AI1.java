@@ -11,6 +11,16 @@ import Game.Rules;
 
 public class AI1 extends AbstractAI {
 
+	BoardEvaluation bEval;
+	
+	public AI1() {
+		bEval = new BoardEvaluation2();
+	}
+	
+	public AI1(BoardEvaluation bEval) {
+		this.bEval = bEval;
+	}
+	
 	@Override
 	public Move nextMove(GameState gs, Player p, Board b, MoveTracker mt) {
 		ArrayList<Move> moves = new ArrayList<Move>();
@@ -53,7 +63,7 @@ public class AI1 extends AbstractAI {
 				Move mv = new Move(verFrom, horFrom, i, j);
 				if(Rules.move(gs.cloneGameState(), p, newBoard, mt.cloneMoveTracker(), null, mv)) {
 					moves.add(mv);
-					boardEvals.add(BoardEvaluation2.getEvaluation(p, newBoard, mt));
+					boardEvals.add(bEval.getEvaluation(p, newBoard, mt));
 				}
 			}
 		}
